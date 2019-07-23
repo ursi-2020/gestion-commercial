@@ -8,9 +8,9 @@
 <form action="/">
     <input type="submit" value="Retour à l'accueil" />
 </form>
-<h2>Utilisateurs</h2>
-{% for utilisateur in utilisateurs %}
-<p>Nom : {{ utilisateur.nom }} Prénom : {{modification.prenom }} Âge : {{utilisateur.age}} </p>
+<h2>Articles</h2>
+{% for article in articles %}
+<p>Nom : {{ article.nom }} Stock : {{article.stock }} </p>
 {% endfor %}
 </body>
 </html>
