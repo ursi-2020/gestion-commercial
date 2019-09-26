@@ -1,16 +1,31 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>{{title}}</title>
-</head>
-<body>
-<form action="/">
-    <input type="submit" value="Retour à l'accueil" />
-</form>
-<h2>Articles</h2>
-{% for article in articles %}
-<p>Nom : {{ article.nom }} Stock : {{article.stock }} </p>
-{% endfor %}
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Produits{% endblock %}
+
+{% block body %}
+    <a href="{% url 'index' %}" class="btn btn-secondary btn-sm">Retour à l'accueil</a>
+
+    <h2>Produits</h2>
+
+    <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#ID</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Code</th>
+            <th scope="col">Prix</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for produit in produits %}
+        <tr>
+            <td>{{ produit.id }}</td>
+            <td>{{ produit.familleProduit }}</td>
+            <td>{{ produit.codeProduit }}</td>
+            <td>{{ produit.prix }}€</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

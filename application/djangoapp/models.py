@@ -24,3 +24,16 @@ class User(models.Model):
 
     def __str__(self):
         return 'User: {}'.format(self.nom)
+
+
+class Product(models.Model):
+    codeProduit = models.CharField(max_length=200)
+    familleProduit = models.CharField(max_length=200)
+    descriptionProduit = models.CharField(max_length=200)
+    quantiteMin = models.PositiveIntegerField()
+    packaging = models.PositiveIntegerField()
+    prix = models.PositiveIntegerField()
+
+    def __str__(self):
+        return "{\"codeProduit\":{}, \"familleProduit\":{}, \"descriptionProduit\":{},\"quantiteMin\":{}, \"packaging\":{}, \"prix\":{}}".format(
+            self.codeProduit, self.familleProduit, self.descriptionProduit, self.quantiteMin, self.packaging, self.prix)

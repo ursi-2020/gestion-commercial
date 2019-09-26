@@ -1,23 +1,21 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>{{title}}</title>
+{% extends "base.html" %}
 
-</head>
-<body>
-<h1>Bienvenue dans la Gestion commerciale</h1>
-<form action="/info">
-    <input type="submit" value="Informations de la gestion commerciale" />
-</form>
-<form action="/add-user">
-    <input type="submit" value="Ajouter un utilisateur" />
-</form>
-<form action="/add-article-catalogue-produits">
-    <input type="submit" value="Ajouter un article" />
-</form>
-<form action="/info-catalogue-produits">
-    <input type="submit" value="Demander les infos du catalogue produits" />
-</form>
-</body>
-</html>
+{% block title %}Accueil{%  endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col align-self-center">
+            <h1>Bienvenue dans la Gestion commerciale</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col align-self-center">
+            <a href="{%  url 'get-products' %}" class="btn btn-secondary btn-sm">Récupérer produits du catalogue</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col align-self-center">
+            <a href="{%  url 'display-products' %}" class="btn btn-secondary btn-sm">Afficher produits du catalogue</a>
+        </div>
+    </div>
+{% endblock %}

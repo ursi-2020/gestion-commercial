@@ -106,3 +106,9 @@ venv.bak/
 
 # Pycharm stuff
 .idea
+
+#weird socle technique stuff
+static/admin/*
+
+#migrations
+application/djangoapp/migrations/*
