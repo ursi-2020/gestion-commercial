@@ -26,6 +26,13 @@ class User(models.Model):
         return 'User: {}'.format(self.nom)
 
 
+class Log(models.Model):
+    name = models.CharField(max_length=80)
+    code = models.CharField(max_length=80)
+    body = models.TextField()
+    time = models.DateTimeField()
+
+
 class Product(models.Model):
     codeProduit = models.CharField(max_length=200)
     familleProduit = models.CharField(max_length=200)

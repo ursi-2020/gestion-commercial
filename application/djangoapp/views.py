@@ -23,7 +23,15 @@ def get_product_fom_catalogue(request):
     for product in products:
         new_product = Product(**product)
         new_product.save()
-    print(str(len(products)) + " products were saved")
+    nb_products = len(products)
+    print(str(nb_products) + " products were saved")
+    if nb_products > 0:
+        log = Log()
+        log.name = "last_product_update"
+        log.code = 200
+        log.text = str(nb_products) + " products were saved"
+        log.time = datetime.now()
+        log.save()
     if request.method == "GET":
         return redirect(display_products)
     else:
@@ -37,7 +45,11 @@ def delete_products(request):
 
 def display_products(request):
     produits = Product.objects.all().order_by("familleProduit")
-    return render(request, 'info_catalogue_produits.html', {"produits": produits})
+    if Log.objects.count() > 0:
+        log = Log.objects.filter(name="last_product_update").latest('time')
+    else:
+        log = None
+    return render(request, 'info_catalogue_produits.html', {"produits": produits, "log": log})
 
 
 def schedule_get_products_from_catalogue(request):

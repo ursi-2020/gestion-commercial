@@ -9,6 +9,8 @@
 
     <h2>Produits</h2>
 
+    <p>Dernière update du catalogue : {% if log %} {{ log.time }} {% else %}Pas de dernière update{% endif %}</p>
+
     <table class="table table-striped table-hover">
         <thead>
         <tr>
