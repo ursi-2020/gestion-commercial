@@ -30,6 +30,11 @@ def get_product_fom_catalogue(request):
         return HttpResponse()
 
 
+def delete_products(request):
+    Product.objects.all().delete()
+    return redirect(display_products)
+
+
 def display_products(request):
     produits = Product.objects.all().order_by("familleProduit")
     return render(request, 'info_catalogue_produits.html', {"produits": produits})
