@@ -52,6 +52,14 @@ def display_products(request):
     return render(request, 'info_catalogue_produits.html', {"produits": produits, "log": log})
 
 
+def display_orders(request):
+    return HttpResponse("This is where you'll be able to see all current orders")
+
+
+def place_order(request):
+    return HttpResponse("This is where you'll be able to place an order")
+
+
 def schedule_get_products_from_catalogue(request):
     clock_time = api.send_request('scheduler', 'clock/time')
     time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
