@@ -60,6 +60,10 @@ def place_order(request):
     return HttpResponse("This is where you'll be able to place an order")
 
 
+def stock_reorder(request):
+    return HttpResponse("This is where you'll be able to reorder to provide for the stocks")
+
+
 def schedule_get_products_from_catalogue(request):
     clock_time = api.send_request('scheduler', 'clock/time')
     time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')

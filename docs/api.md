@@ -1,3 +1,18 @@
 [Retour à l'index](index.md)
 
-Pour l'instant l'applciation gestion-commerciale ne propose pas de service d'API disponible à l'utilisation.
+# JSON API
+
+## Place an order
+Place an order in gestion-commerciale for the stocks
+
+**Service name**: `place-order`
+
+**URL** : `place-order`
+
+**Method** : `POST`
+
+**Auth required** : NO
+
+**Query Parameters** : order : *JsonDocument containing order's parameters*
+
+**Content examples:** Not done yet.
