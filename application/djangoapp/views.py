@@ -78,6 +78,7 @@ def schedule_get_products_from_catalogue(request):
         "source_app": "gestion-commerciale",
         "name": "test"
     }
+
     r = schedule_task(body)
     return render(request, 'index.html', {})
 
