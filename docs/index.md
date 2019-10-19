@@ -1,19 +1,20 @@
 [Sommaire](https://ursi-2020.github.io/Documentation/)
 
-[API](api.md)
-
-# Use Case
-
-![use_case](img/use-case-sprint2.png)
+*[API](api.md)*
 
 # Rôle de l'application
 
-Le rôle de la gestion commerciale est de passer commande auprès des fournisseurs afin de réaprovisionner les stocks. Elle assure aussi la connexion avec le magasin et le e-commerce pour proposer du réassort et la disponibilité des stocks.
+Le rôle du catalogue produit est de récuperer les informations produits depuis les différents fournisseurs pour pouvoir les redistribuer dans le système d'information.
+
+# Use Case
+
+*[Anciennes versions des Uses Cases](use-case.md)*
+
+![use case](img/use-case.png)
 
 # Membres du groupe
 
-* Nicolas Cendrier
-* Erwan Chabaud (PO)
-* Julien Gantzer
-* Alexandre Rodrigues
-* Jean-Baptiste Verdret
+* Esteban Casanas
+* Jean-Baptiste Roland
+* Alexandre Guedj
+* Louis Bonnafous

@@ -4,11 +4,15 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('schedule/get-products', views.schedule_get_products_from_catalogue, name='schedule-get-product'),
-    path('get-products', views.get_product_fom_catalogue, name='get-products'),
-    path('display-products', views.display_products, name='display-products'),
-    path('delete-products', views.delete_products, name='delete-products'),
-    path('display-orders', views.display_orders, name='display-orders'),
-    path('place-order', views.place_order, name='place-order'),
-    path('stock-reorder', views.stock_reorder, name='stock-reorder'),
+    path('info', views.info, name='info'),
+    path('load-data', views.load_data, name='load-data'),
+    path('schedule-load-data', views.schedule_load_data, name='schedule-load-data'),
+    path('automatic-load-data', views.automatic_load_data, name='automatic-load-data'),
+    path('clear-data', views.clear_data, name='clear-data'),
+
+    ## API ROUTES ##
+    path('api/get-all', views.api_get_all, name='api-get-all'),
+    path('api/get-ecommerce', views.api_get_ecommerce, name='api-get-ecommerce'),
+    path('api/get-magasin', views.api_get_magasin, name='api-get-magasin'),
+    path('api/get-by-id/<int:id_product>', views.api_get_by_id, name='api-get-by-id')
 ]
