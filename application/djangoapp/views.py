@@ -25,7 +25,14 @@ def get_product_fom_catalogue(request):
     data = api.send_request('catalogue-produit', 'api/get-all')
     products = json.loads(data)['produits']
     for product in products:
-        new_product = Product(**product)
+        new_product = Product.objects.create(
+            codeProduit=product['codeProduit'],
+            familleProduit=product['familleProduit'],
+            descriptionProduit=product['descriptionProduit'],
+            quantiteMin=product['quantiteMin'],
+            packaging=product['packaging'],
+            prix=product['prix']
+            )
         new_product.save()
     nb_products = len(products)
     print(str(nb_products) + " products were saved")
@@ -65,14 +72,16 @@ def display_products(request):
 def simulate_placing_order(request):
     body = \
         {
+            'stock': '[]',
+            'livraiosn' : True,
             "idCommande": 12,
             "Produits": [
                 {
-                    "codeProduit": 3291,
+                    "codeProduit": "X1-1",
                     "quantite": 1,
                 },
                 {
-                    "codeProduit": 32,
+                    "codeProduit": "X1-2",
                     "quantite": 11,
                 },
             ]
@@ -101,9 +110,11 @@ def display_orders(request):
 
 @csrf_exempt
 def place_order(request):
+    # load la requête de magasin
     jsonfile = json.loads(request.body)
     list_asked = jsonfile['Produits']
 
+    # Transmet la requête à Stock
     headers = {'Host': 'gestion-commerciale'}
     response = requests.post(api.api_services_url + 'simulate-stock-response', headers=headers, json=jsonfile)
 
@@ -141,19 +152,33 @@ def empty_stock_reorder(request):
     return redirect(display_stock_reorder)
 
 
+def initialize_stock(request):
+    get_product_fom_catalogue(request)
+    jsonfile = []
+    for product in Product.objects.all():
+        jsonfile.append({"codeProduit": product.codeProduit, "quantite": 0})
+    return jsonfile
+
+
 # gestion de l'envoi de ressources à Stock
 
 def stock_reorder(request):
-    # Call route pour get stock
-    data = api.send_request('gestion-commerciale', 'simulate-reorder-stock')
     date = api.send_request('scheduler', 'clock/time')[1:-1]
     id_bon = 0
     for s in date:
         if s.isdigit():
             id_bon = id_bon * 10 + int(s)
 
+    data = api.send_request('gestion-stock', 'api/get-all')
     jsonfile = json.loads(data)
-    for product in jsonfile["Produits"]:
+    if jsonfile["stock"] == "[]":
+        jsonfile["Produits"] = initialize_stock(request)
+    print(jsonfile, "------------------------------------------------------------------------------------------")
+
+    jsonfile.pop('stock', None)
+    print(jsonfile, "------------------------------------------------------------------------------------------")
+    list_products = jsonfile["Produits"]
+    for product in list_products:
         modulo = random.randrange(10, 30)
         new_product = StockReorder.objects.create(
             identifiantBon=id_bon,
@@ -163,11 +188,16 @@ def stock_reorder(request):
             dateLivraison=date
             )
         new_product.save()
-        product["quantité"] = modulo
+        product["quantite"] = modulo
     jsonfile['livraison'] = True
+    jsonfile["idCommande"] = id_bon
 
-    #headers = {'Host': 'gestion-commerciale'}
-    #requests.post(api.api_services_url + 'simulate-stock-response', headers=headers, json=jsonfile)
+    print()
+    print(jsonfile)
+    print()
+
+    headers = {'Host': 'gestion-stock'}
+    requests.post(api.api_services_url + 'api/add-to-stock', headers=headers, json=jsonfile)
     return redirect(display_stock_reorder)
 
 

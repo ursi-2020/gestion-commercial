@@ -43,7 +43,7 @@ class DeliveryRequest(models.Model):
 class StockReorder(models.Model):
     identifiantBon = models.CharField(max_length=200)
     dateLivraison = models.CharField(max_length=200)
-    codeProduit = models.PositiveIntegerField()
+    codeProduit= models.CharField(max_length=200)
     quantiteAvant = models.PositiveIntegerField()
     quantiteLivree = models.PositiveIntegerField()
 
