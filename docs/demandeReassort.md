@@ -6,7 +6,7 @@
 
 Le magasin envoi un bon de commande à la gestion commerciale.
 Ensuire la gestion commerciale le transmet aux stocks.
-Les stocks répondent pour confirmer le nombre de produits disponible.
+Les stocks répondent pour confirmer le nombre de produits disponibles.
 
 ## Applications concernées
 Magasin, Stocks
