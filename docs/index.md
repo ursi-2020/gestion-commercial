@@ -2,6 +2,8 @@
 
 [API](api.md)
 
+[UserCases](userCases.md)
+
 # Use Case
 
 ![use_case](img/use-case-sprint2.png)
