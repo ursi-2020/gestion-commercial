@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des réappro du Stock{% endblock %}
+
+{% block body %}
+    <a href="{% url 'index' %}" class="btn btn-secondary btn-sm">Retour à l'accueil</a>
+    <a href="{% url 'schedule-stock-reorder' %}" class="btn btn-secondary btn-sm">Add schedule</a>
+    <a href="{%  url 'empty-stock-reorder' %}" class="btn btn-secondary btn-sm">Vider la liste</a>
+    <a href="{%  url 'stock-reorder' %}" class="btn btn-secondary btn-sm">Simuler commande</a>
+
+    <h2>Liste des réappro du Stock</h2>
+
+    <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#ID</th>
+            <th scope="col">codeBon</th>
+            <th scope="col">dateLivraison</th>
+            <th scope="col">codeProduit</th>
+            <th scope="col">quantiteAvant</th>
+            <th scope="col">quantiteLivree</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for commande in commandes %}
+        <tr>
+            <td>{{ commande.id }}</td>
+            <td>{{ commande.identifiantBon }}</td>
+            <td>{{ commande.dateLivraison }}</td>
+            <td>{{ commande.codeProduit }}</td>
+            <td>{{ commande.quantiteAvant }}</td>
+            <td>{{ commande.quantiteLivree}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

@@ -1,176 +1,18 @@
-[Sommaire](https://ursi-2020.github.io/catalogue-produits/)
+[Retour à l'index](index.md)
 
 # JSON API
 
-## Get all products
+## Place an order
+Place an order in gestion-commerciale for the stocks
 
-Get the products registered in the catalogue produits db.
+**Service name**: `place-order`
 
-If a familleProduit is specified, returns only the products that match this category of products.
+**URL** : `place-order`
 
-**Service name** : `catalogue-produit`
-
-**URL** : `api/get-all`
-
-**Method** : `GET`
+**Method** : `POST`
 
 **Auth required** : NO
 
-**Query Parameters** : familleProduit : *string*
+**Query Parameters** : order : *JsonDocument containing order's parameters*
 
-**Content examples:**
-
-
-```json
-{
-  "produits": [
-    {
-      "id": 3291,
-      "codeProduit": "X1-1",
-      "familleProduit": "Console",
-      "descriptionProduit": "Console:P3-1",
-      "quantiteMin": 5,
-      "packaging": 1,
-      "prix": 154,
-      "exclusivite": ""
-    },
-    {
-      "id": 3290,
-      "codeProduit": "X1-0",
-      "familleProduit": "Frigos",
-      "descriptionProduit": "Frigos:P1-0",
-      "quantiteMin": 15,
-      "packaging": 2,
-      "prix": 424,
-      "exclusivite": "ecommerce"
-    },
-  ]
-}
-```
-
-## Get ecommerce products
-
-Get the products that ecommerce can sell registered in the catalogue produits db.
-
-If a familleProduit is specified, returns only the products that match this category of products.
-
-**Service name** : `catalogue-produit`
-
-**URL** : `api/get-ecommerce`
-
-**Method** : `GET`
-
-**Auth required** : NO
-
-**Query Parameters** : familleProduit : *string*
-
-**Content examples:**
-
-
-```json
-{
-  "produits": [
-    {
-      "id": 3290,
-      "codeProduit": "X1-0",
-      "familleProduit": "Frigos",
-      "descriptionProduit": "Frigos:P1-0",
-      "quantiteMin": 15,
-      "packaging": 2,
-      "prix": 424,
-      "exclusivite": "ecommerce"
-    },
-    {
-      "id": 3291,
-      "codeProduit": "X1-1",
-      "familleProduit": "Console",
-      "descriptionProduit": "Console:P3-1",
-      "quantiteMin": 5, "packaging": 1,
-      "prix": 154,
-      "exclusivite": ""
-    }
-  ]
-}
-```
-
-## Get magasin products
-
-Get the products that magasin can sell registered in the Catalogue Produit db.
-
-If a familleProduit is specified, returns only the products that match this category of products.
-
-**Service name** : `catalogue-produit`
-
-**URL** : `api/get-magasin`
-
-**Method** : `GET`
-
-**Auth required** : NO
-
-**Query Parameters** : familleProduit : *string*
-
-**Content examples:**
-
-
-```json
-{
-  "produits": [
-    {
-      "id": 3291,
-      "codeProduit": "X1-1",
-      "familleProduit": "Console",
-      "descriptionProduit": "Console:P3-1",
-      "quantiteMin": 5,
-      "packaging": 1,
-      "prix": 154,
-      "exclusivite": ""
-    },
-    {
-      "id": 3292,
-      "codeProduit": "X1-2",
-      "familleProduit": "Frigos",
-      "descriptionProduit": "Frigos:P3-2",
-      "quantiteMin": 10,
-      "packaging": 1,
-      "prix": 7948,
-      "exclusivite": "magasin"}
-  ]
-}
-```
-
-## Get one product by id
-
-Get the details of a product registered in the Catalogue Produit db with ID.
-
-**Service name** : `catalogue-produit`
-
-**URL** : `api/get-by-id/<id>`
-
-**Method** : `GET`
-
-**Auth required** : NO
-
-**Content examples:**
-
-*Success*
-```json
-{
-  "produit" : {
-    "id": 3291,
-    "codeProduit": "X1-1",
-    "familleProduit": "Console",
-    "descriptionProduit": "Console:P3-1",
-    "quantiteMin": 5,
-    "packaging": 1,
-    "prix": 154,
-    "exclusivite": ""
-  }
-}
-```
-
-*Error*
-```json
-{
-  "error": "ID produit invalide ou produit inexistant"
-}
-```
+**Content examples:** Not done yet.
