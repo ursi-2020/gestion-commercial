@@ -33,6 +33,7 @@ def get_product_fom_catalogue(request):
             packaging=product['packaging'],
             prix=product['prix']
             )
+
         new_product.save()
     nb_products = len(products)
     print(str(nb_products) + " products were saved")
