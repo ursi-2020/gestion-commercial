@@ -73,9 +73,6 @@ def display_products(request):
 def simulate_placing_order(request):
     body = \
         {
-            'stock': '[]',
-            'livraiosn' : True,
-            "idCommande": 12,
             "Produits": [
                 {
                     "codeProduit": "X1-1",
@@ -172,8 +169,10 @@ def stock_reorder(request):
 
     data = api.send_request('gestion-stock', 'api/get-all')
     jsonfile = json.loads(data)
-    if jsonfile["stock"] == "[]":
+    if jsonfile["stock"] == []:
         jsonfile["Produits"] = initialize_stock(request)
+    else:
+        jsonfile["Produits"] = jsonfile["stock"]
     print(jsonfile, "------------------------------------------------------------------------------------------")
 
     jsonfile.pop('stock', None)
