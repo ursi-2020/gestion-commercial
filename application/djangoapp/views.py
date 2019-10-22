@@ -58,9 +58,7 @@ def delete_products(request):
 
 
 def dict_to_json(py_dict):
-    print("dict is :", py_dict)
     tmp = json.loads(json.dumps(py_dict))
-    print("json is :", tmp)
     return tmp
 
 # Display les produits du catalogue
@@ -79,6 +77,7 @@ def display_products(request):
 def simulate_placing_order(request):
     body = \
         {
+            "idCommande": 123,
             "Produits": [
                 {
                     "codeProduit": "X1-1",
@@ -93,8 +92,7 @@ def simulate_placing_order(request):
     headers = {"Host": "gestion-commerciale"}
     r = requests.post(api.api_services_url + "place-order", headers=headers, json=dict_to_json(body))
 
-    return redirect(display_orders)
-
+    return JsonResponse(json.loads(r.text))
 
 # Simule le comportement de stock vis à vis du bon de commande
 
@@ -117,12 +115,12 @@ def place_order(request):
     # load la requête de magasin
     jsonfile = json.loads(request.body)
     list_asked = jsonfile["Produits"]
-
+    jsonfile["livraison"] = 0
     # Transmet la requête à Stock
-    headers = {"Host": "gestion-commerciale"}
-    response = requests.post(api.api_services_url + "simulate-stock-response", headers=headers, json=dict_to_json(jsonfile))
-
-    jsonfile = json.loads(response.text)
+    headers = {"Host": "gestion-stock"}
+    response = requests.post(api.api_services_url + "api/get-from-stock", headers=headers, json=dict_to_json(jsonfile))
+    jsonfile = json.loads(response.text)["Response"]
+    print(jsonfile  )
     list_sent = jsonfile["Produits"]
 
     for n in range(0, len(list_asked)):
@@ -133,7 +131,6 @@ def place_order(request):
             quantiteLivree=list_sent[n]["quantite"]
             )
         new_product.save()
-
     return JsonResponse(dict_to_json(jsonfile))
 
 
