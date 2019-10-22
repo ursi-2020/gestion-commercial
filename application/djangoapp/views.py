@@ -14,7 +14,7 @@ import random
 
 def index(request):
     context = {}
-    return render(request, 'index.html', context)
+    return render(request, "index.html", context)
 
 
 # Get le catalogue
@@ -22,16 +22,16 @@ def index(request):
 @csrf_exempt
 def get_product_fom_catalogue(request):
     Product.objects.all().delete()
-    data = api.send_request('catalogue-produit', 'api/get-all')
-    products = json.loads(data)['produits']
+    data = api.send_request("catalogue-produit", "api/get-all")
+    products = json.loads(data)["produits"]
     for product in products:
         new_product = Product.objects.create(
-            codeProduit=product['codeProduit'],
-            familleProduit=product['familleProduit'],
-            descriptionProduit=product['descriptionProduit'],
-            quantiteMin=product['quantiteMin'],
-            packaging=product['packaging'],
-            prix=product['prix']
+            codeProduit=product["codeProduit"],
+            familleProduit=product["familleProduit"],
+            descriptionProduit=product["descriptionProduit"],
+            quantiteMin=product["quantiteMin"],
+            packaging=product["packaging"],
+            prix=product["prix"]
             )
 
         new_product.save()
@@ -57,15 +57,21 @@ def delete_products(request):
     return redirect(display_products)
 
 
+def dict_to_json(py_dict):
+    print("dict is :", py_dict)
+    tmp = json.loads(json.dumps(py_dict))
+    print("json is :", tmp)
+    return tmp
+
 # Display les produits du catalogue
 
 def display_products(request):
     produits = Product.objects.all().order_by("familleProduit")
     if Log.objects.count() > 0:
-        log = Log.objects.filter(name="last_product_update").latest('time')
+        log = Log.objects.filter(name="last_product_update").latest("time")
     else:
         log = None
-    return render(request, 'info_catalogue_produits.html', {"produits": produits, "log": log})
+    return render(request, "info_catalogue_produits.html", {"produits": produits, "log": log})
 
 
 # Simule le comportement du magain quand il commande du stock
@@ -84,8 +90,8 @@ def simulate_placing_order(request):
                 },
             ]
         }
-    headers = {'Host': 'gestion-commerciale'}
-    r = requests.post(api.api_services_url + 'place-order', headers=headers, json=body)
+    headers = {"Host": "gestion-commerciale"}
+    r = requests.post(api.api_services_url + "place-order", headers=headers, json=dict_to_json(body))
 
     return redirect(display_orders)
 
@@ -101,34 +107,34 @@ def simulate_stock_response(request):
 
 def display_orders(request):
     orders = DeliveryRequest.objects.all()
-    return render(request, 'info_commandes.html', {"commandes": orders})
+    return render(request, "info_commandes.html", {"commandes": orders})
 
 
-# Traitement d'une demande de réapprovisionnement
+# Traitement d"une demande de réapprovisionnement
 
 @csrf_exempt
 def place_order(request):
     # load la requête de magasin
     jsonfile = json.loads(request.body)
-    list_asked = jsonfile['Produits']
+    list_asked = jsonfile["Produits"]
 
     # Transmet la requête à Stock
-    headers = {'Host': 'gestion-commerciale'}
-    response = requests.post(api.api_services_url + 'simulate-stock-response', headers=headers, json=jsonfile)
+    headers = {"Host": "gestion-commerciale"}
+    response = requests.post(api.api_services_url + "simulate-stock-response", headers=headers, json=dict_to_json(jsonfile))
 
     jsonfile = json.loads(response.text)
-    list_sent = jsonfile['Produits']
+    list_sent = jsonfile["Produits"]
 
     for n in range(0, len(list_asked)):
         new_product = DeliveryRequest.objects.create(
-            identifiantBon=jsonfile['idCommande'],
-            codeProduit=list_sent[n]['codeProduit'],
-            quantiteDemandee=list_asked[n]['quantite'],
-            quantiteLivree=list_sent[n]['quantite']
+            identifiantBon=jsonfile["idCommande"],
+            codeProduit=list_sent[n]["codeProduit"],
+            quantiteDemandee=list_asked[n]["quantite"],
+            quantiteLivree=list_sent[n]["quantite"]
             )
         new_product.save()
 
-    return JsonResponse(jsonfile)
+    return JsonResponse(dict_to_json(jsonfile))
 
 
 # Vide la db contenant les demandes de réapprovisionnement
@@ -142,7 +148,7 @@ def empty_orders(request):
 
 def display_stock_reorder(request):
     orders = StockReorder.objects.all()
-    return render(request, 'info_reorder_stock.html', {"commandes": orders})
+    return render(request, "info_reorder_stock.html", {"commandes": orders})
 
 
 def empty_stock_reorder(request):
@@ -155,49 +161,44 @@ def initialize_stock(request):
     jsonfile = []
     for product in Product.objects.all():
         jsonfile.append({"codeProduit": product.codeProduit, "quantite": 0})
-    return jsonfile
+    return dict_to_json(jsonfile)
 
 
-# gestion de l'envoi de ressources à Stock
+# gestion de l"envoi de ressources à Stock
 
 def stock_reorder(request):
-    date = api.send_request('scheduler', 'clock/time')[1:-1]
+    date = api.send_request("scheduler", "clock/time")[1:-1]
     id_bon = 0
     for s in date:
         if s.isdigit():
             id_bon = id_bon * 10 + int(s)
 
-    data = api.send_request('gestion-stock', 'api/get-all')
+    data = api.send_request("gestion-stock", "api/get-all")
     jsonfile = json.loads(data)
-    if jsonfile["stock"] == []:
+
+    if not jsonfile["stock"]:
         jsonfile["Produits"] = initialize_stock(request)
     else:
         jsonfile["Produits"] = jsonfile["stock"]
-    print(jsonfile, "------------------------------------------------------------------------------------------")
 
-    jsonfile.pop('stock', None)
-    print(jsonfile, "------------------------------------------------------------------------------------------")
+    jsonfile.pop("stock", None)
     list_products = jsonfile["Produits"]
     for product in list_products:
         modulo = random.randrange(10, 30)
         new_product = StockReorder.objects.create(
             identifiantBon=id_bon,
-            codeProduit=product['codeProduit'],
+            codeProduit=product["codeProduit"],
             quantiteAvant=product["quantite"],
             quantiteLivree=modulo,
             dateLivraison=date
             )
         new_product.save()
         product["quantite"] = modulo
-    jsonfile['livraison'] = True
+    jsonfile["livraison"] = 1
     jsonfile["idCommande"] = id_bon
 
-    print()
-    print(jsonfile)
-    print()
-
-    headers = {'Host': 'gestion-stock'}
-    requests.post(api.api_services_url + 'api/add-to-stock', headers=headers, json=jsonfile)
+    headers = {"Host": "gestion-stock"}
+    requests.post(api.api_services_url + "api/add-to-stock", headers=headers, json=dict_to_json(jsonfile))
     return redirect(display_stock_reorder)
 
 
@@ -215,50 +216,50 @@ def simulate_reorder_stock(request):
                 },
             ]
         }
-    return JsonResponse(body)
+    return JsonResponse(dict_to_json(body))
 
 
 # Scheduler
 
 def schedule_stock_reorder(request):
-    clock_time = api.send_request('scheduler', 'clock/time')
-    time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
+    clock_time = api.send_request("scheduler", "clock/time")
+    time = datetime.strptime(clock_time, "'%d/%m/%Y-%H:%M:%S'")
     time = time + timedelta(seconds=80)
-    time_str = time.strftime('%d/%m/%Y-%H:%M:%S')
+    time_str = time.strftime("%d/%m/%Y-%H:%M:%S")
     body = {
-        "target_url": 'stock-reorder',
-        "target_app": 'gestion-commerciale',
+        "target_url": "stock-reorder",
+        "target_app": "gestion-commerciale",
         "time": time_str,
         "recurrence": "jour",
-        "data": '{}',
+        "data": "{}",
         "source_app": "gestion-commerciale",
         "name": "gesco-stock-reorder"
     }
     r = schedule_task(body)
-    return render(request, 'index.html', {})
+    return render(request, "index.html", {})
 
 
 def schedule_get_products_from_catalogue(request):
-    clock_time = api.send_request('scheduler', 'clock/time')
-    time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
+    clock_time = api.send_request("scheduler", "clock/time")
+    time = datetime.strptime(clock_time, "'%d/%m/%Y-%H:%M:%S'")
     time = time + timedelta(seconds=80)
-    time_str = time.strftime('%d/%m/%Y-%H:%M:%S')
+    time_str = time.strftime("%d/%m/%Y-%H:%M:%S")
     body = {
-        "target_url": 'get-products',
-        "target_app": 'gestion-commerciale',
+        "target_url": "get-products",
+        "target_app": "gestion-commerciale",
         "time": time_str,
         "recurrence": "jour",
-        "data": '{}',
+        "data": "{}",
         "source_app": "gestion-commerciale",
         "name": "gesco-get-product-catalogue"
     }
     r = schedule_task(body)
-    return render(request, 'index.html', {})
+    return render(request, "index.html", {})
 
 
 def schedule_task(body):
-    headers = {'Host': 'scheduler'}
-    r = requests.post(api.api_services_url + 'schedule/add', headers=headers, json=body)
+    headers = {"Host": "scheduler"}
+    r = requests.post(api.api_services_url + "schedule/add", headers=headers, json=body)
     print(r.status_code)
     print(r.text)
     return r.text
