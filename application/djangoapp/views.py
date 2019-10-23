@@ -1,15 +1,14 @@
 from django.http import HttpResponse
 # from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt
 from apipkg import api_manager as api
-from application.djangoapp.models import *
 from datetime import datetime, timedelta
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 import random
+from .models import *
 
 
 def index(request):
@@ -61,6 +60,7 @@ def dict_to_json(py_dict):
     tmp = json.loads(json.dumps(py_dict))
     return tmp
 
+
 # Display les produits du catalogue
 
 def display_products(request):
@@ -92,7 +92,7 @@ def simulate_placing_order(request):
     headers = {"Host": "gestion-commerciale"}
     r = requests.post(api.api_services_url + "place-order", headers=headers, json=dict_to_json(body))
 
-    return JsonResponse(json.loads(r.text))
+    return redirect(display_orders)
 
 # Simule le comportement de stock vis à vis du bon de commande
 
@@ -119,19 +119,19 @@ def place_order(request):
     # Transmet la requête à Stock
     headers = {"Host": "gestion-stock"}
     response = requests.post(api.api_services_url + "api/get-from-stock", headers=headers, json=dict_to_json(jsonfile))
-    jsonfile = json.loads(response.text)["Response"]
-    print(jsonfile  )
-    list_sent = jsonfile["Produits"]
+    stock_response = json.loads(response.text)["Response"]
+
+    list_sent = stock_response["Produits"]
 
     for n in range(0, len(list_asked)):
         new_product = DeliveryRequest.objects.create(
-            identifiantBon=jsonfile["idCommande"],
+            identifiantBon=stock_response["idCommande"],
             codeProduit=list_sent[n]["codeProduit"],
             quantiteDemandee=list_asked[n]["quantite"],
             quantiteLivree=list_sent[n]["quantite"]
             )
         new_product.save()
-    return JsonResponse(dict_to_json(jsonfile))
+    return JsonResponse(dict_to_json(stock_response))
 
 
 # Vide la db contenant les demandes de réapprovisionnement
@@ -153,9 +153,12 @@ def empty_stock_reorder(request):
     return redirect(display_stock_reorder)
 
 
+# Initialize the jsonfile if stock do not have product at all
+
 def initialize_stock(request):
     get_product_fom_catalogue(request)
     jsonfile = []
+    # Replace .all() with something like .justlecodeproduit
     for product in Product.objects.all():
         jsonfile.append({"codeProduit": product.codeProduit, "quantite": 0})
     return dict_to_json(jsonfile)
@@ -173,10 +176,13 @@ def stock_reorder(request):
     data = api.send_request("gestion-stock", "api/get-all")
     jsonfile = json.loads(data)
 
-    if not jsonfile["stock"]:
-        jsonfile["Produits"] = initialize_stock(request)
+    if "stock" in jsonfile :
+        if not jsonfile["stock"]:
+            jsonfile["Produits"] = initialize_stock(request)
+        else:
+            jsonfile["Produits"] = jsonfile["stock"]
     else:
-        jsonfile["Produits"] = jsonfile["stock"]
+        HttpResponse("Stock changed their json return value")
 
     jsonfile.pop("stock", None)
     list_products = jsonfile["Produits"]
@@ -197,23 +203,6 @@ def stock_reorder(request):
     headers = {"Host": "gestion-stock"}
     requests.post(api.api_services_url + "api/add-to-stock", headers=headers, json=dict_to_json(jsonfile))
     return redirect(display_stock_reorder)
-
-
-def simulate_reorder_stock(request):
-    body = \
-        {
-            "Produits": [
-                {
-                    "codeProduit": 3291,
-                    "quantite": 1,
-                },
-                {
-                    "codeProduit": 32,
-                    "quantite": 11,
-                },
-            ]
-        }
-    return JsonResponse(dict_to_json(body))
 
 
 # Scheduler

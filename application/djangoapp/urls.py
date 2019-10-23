@@ -19,7 +19,6 @@ urlpatterns = [
     path('simulate-stock-response', views.simulate_stock_response, name='simulate-stock-response'),
 
     # Gestion réapro Stock
-    path('simulate-reorder-stock', views.simulate_reorder_stock, name='simulate-reorder-stock'),
     path('stock-reorder', views.stock_reorder, name='stock-reorder'),
     path('display-stock-reorder', views.display_stock_reorder, name='display-stock-reorder'),
     path('empty-stock-reorder', views.empty_stock_reorder, name='empty-stock-reorder'),
