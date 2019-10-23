@@ -91,7 +91,7 @@ def simulate_placing_order(request):
         }
     headers = {"Host": "gestion-commerciale"}
     r = requests.post(api.api_services_url + "place-order", headers=headers, json=dict_to_json(body))
-
+    print(r.text)
     return redirect(display_orders)
 
 # Simule le comportement de stock vis à vis du bon de commande
@@ -115,6 +115,7 @@ def place_order(request):
     # load la requête de magasin
     jsonfile = json.loads(request.body)
     list_asked = jsonfile["Produits"]
+
     jsonfile["livraison"] = 0
     # Transmet la requête à Stock
     headers = {"Host": "gestion-stock"}
@@ -209,9 +210,9 @@ def stock_reorder(request):
 
 def schedule_stock_reorder(request):
     clock_time = api.send_request("scheduler", "clock/time")
-    time = datetime.strptime(clock_time, "'%d/%m/%Y-%H:%M:%S'")
+    time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
     time = time + timedelta(seconds=80)
-    time_str = time.strftime("%d/%m/%Y-%H:%M:%S")
+    time_str = time.strftime('%d/%m/%Y-%H:%M:%S')
     body = {
         "target_url": "stock-reorder",
         "target_app": "gestion-commerciale",
@@ -227,9 +228,9 @@ def schedule_stock_reorder(request):
 
 def schedule_get_products_from_catalogue(request):
     clock_time = api.send_request("scheduler", "clock/time")
-    time = datetime.strptime(clock_time, "'%d/%m/%Y-%H:%M:%S'")
+    time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
     time = time + timedelta(seconds=80)
-    time_str = time.strftime("%d/%m/%Y-%H:%M:%S")
+    time_str = time.strftime('%d/%m/%Y-%H:%M:%S')
     body = {
         "target_url": "get-products",
         "target_app": "gestion-commerciale",
