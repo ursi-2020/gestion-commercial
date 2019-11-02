@@ -4,18 +4,17 @@
 
 # Réaprovisionner stock
 
-Réaprovisionner les stocks à l'aide du fournisseur
-![UML](uml/réaproStock.png)
+Ajouter des stocks quand un nouveau produit est ajouté au catalogue
+
+![UML](uml/nouveauProduit.png)
 
 ## Applications concernées
-Stocks
+Catalogue
 
 ## API mises à disposition
 
-Aucune
+### POST : nouveau produit
 
 ## API utilisées
 
-### GET : Etat des stocks
-### POST : Demande de stock
-### POST : envoi du stock
+Aucune

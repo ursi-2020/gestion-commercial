@@ -1,5 +1,6 @@
 [Retour à l'index](index.md)
-[Retour à la liste des userCases](userCases.md)
+
+[Retour à la liste des use cases](userCases.md)
 
 # Consulter l'ensemble des produits
 

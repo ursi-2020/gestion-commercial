@@ -1,9 +1,13 @@
 [Retour à l'index](index.md)
 
-[Consulter produits](consulterProduit.md)
+[Consulter l'ensemble des produits](consulterProduit.md)
 
-[Consulter demande de réaprovisionnement](consulterDemandeReapro.md)
+[Consulter les commandes de réaprovisionnement](consulterDemandeReapro.md)
 
 [Réaprovisionner stock](reaproStock.md)
 
-[Demande de réassort](demandeReassort)
+[Traiter une demande de réassort](demandeReassort.md)
+
+[Gestion niveau stock](gestionStock.md)
+
+[Initialiser stock nouveau produit](initStock.md)

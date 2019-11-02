@@ -1,5 +1,6 @@
 [Retour à l'index](index.md)
-[Retour à la liste userCases](userCases.md)
+
+[Retour à la liste use cases](userCases.md)
 
 # Consulter demandes de réaprovisionnement
 

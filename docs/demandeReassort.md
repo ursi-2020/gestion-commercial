@@ -1,25 +1,22 @@
 [Retour à l'index](index.md)
-[Retour à la liste des API](api.md)
-[Retour à la liste des userCases](userCases.md)
+
+[Retour à la liste des use cases](userCases.md)
 
 # Demande de réassort
 
-Le magasin envoi un bon de commande à la gestion commerciale.
-Ensuire la gestion commerciale le transmet aux stocks.
-Les stocks répondent pour confirmer le nombre de produits disponibles.
+Réaprovisionner le magasin
+
+![UML](uml/réassortMagasin.png)
 
 ## Applications concernées
 Magasin, Stocks
 
-## Requête
-**Service name**: `place-order`
+## API mises à disposition
 
-**URL** : `place-order`
+### POST : bon de commande (magasin->gesco)
 
-**Method** : `POST`
 
-**Auth required** : NO
+## API utilisées 
 
-**Query Parameters** : order : *JsonDocument containing order's parameters*
-
-**Content examples:** Not done yet.
+### POST : bon de commande (gesco->stock)
+### POST : bon de livraison

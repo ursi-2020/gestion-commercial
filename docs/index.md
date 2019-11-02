@@ -1,12 +1,10 @@
 [Sommaire](https://ursi-2020.github.io/Documentation/)
 
-[API](api.md)
-
-[UserCases](userCases.md)
+[Uses cases](userCases.md)
 
 # Use Case
 
-![use_case](img/use-case-sprint2.png)
+![use_case](img/use-case-sprint3.png)
 
 # Rôle de l'application
 
