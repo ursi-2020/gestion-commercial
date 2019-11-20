@@ -16,11 +16,17 @@ def index(request):
     return render(request, "index.html", context)
 
 
+# Set la quantité initiale
+
+def init_quantite(quantiteMin):
+    return 2 * quantiteMin
+
 # Get le catalogue
 
 @csrf_exempt
 def get_product_fom_catalogue(request):
     Product.objects.all().delete()
+
     data = api.send_request("catalogue-produit", "api/get-all")
     products = json.loads(data)["produits"]
     for product in products:
@@ -30,7 +36,8 @@ def get_product_fom_catalogue(request):
             descriptionProduit=product["descriptionProduit"],
             quantiteMin=product["quantiteMin"],
             packaging=product["packaging"],
-            prix=product["prix"]
+            prix=product["prix"],
+            quantite=init_quantite(product["quantiteMin"])
             )
 
         new_product.save()
