@@ -71,12 +71,12 @@ def dict_to_json(py_dict):
 # Display les produits du catalogue
 
 def display_products(request):
-    produits = Product.objects.all().order_by("familleProduit")
+    products = Product.objects.all().order_by("familleProduit")
     if Log.objects.count() > 0:
         log = Log.objects.filter(name="last_product_update").latest("time")
     else:
         log = None
-    return render(request, "info_catalogue_produits.html", {"produits": produits, "log": log})
+    return render(request, "info_catalogue_produits.html", {"products": products, "log": log})
 
 
 # Simule le comportement du magain quand il commande du stock
