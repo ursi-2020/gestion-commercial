@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load divide %}
+
 {% block title %}Produits{% endblock %}
 
 {% block body %}
@@ -23,13 +25,13 @@
         </tr>
         </thead>
         <tbody>
-        {% for produit in produits %}
+        {% for product in products %}
         <tr>
-            <td>{{ produit.id }}</td>
-            <td>{{ produit.familleProduit }}</td>
-            <td>{{ produit.codeProduit }}</td>
-            <td>{{ produit.prix }}€</td>
-            <td>{{ produit.quantite }}</td>
+            <td>{{ product.id }}</td>
+            <td>{{ product.familleProduit }}</td>
+            <td>{{ product.codeProduit }}</td>
+            <td>{{ product.prix |div:100 }}€</td>
+            <td>{{ product.quantite }}</td>
         </tr>
         {% endfor %}
         </tbody>
