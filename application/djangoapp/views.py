@@ -30,6 +30,38 @@ def test_async(request):
     queue.send('gestion-commerciale', message)
     return redirect(index)
 
+def simulate_get_new_products(request):
+    body = \
+        {
+            "produits": [
+                {
+                    "id": 1664,
+                    "codeProduit": "X1664",
+                    "familleProduit": "Bière",
+                    "descriptionProduit": "1664",
+                    "quantiteMin": 24,
+                    "packaging": 1,
+                    "prix": 666,
+                    "exclusivite": ""
+                },
+                {
+                    "id": 1,
+                    "codeProduit": "X3-0",
+                    "familleProduit": "Surgelés",
+                    "descriptionProduit": "Pizza",
+                    "quantiteMin": 1,
+                    "packaging": 2,
+                    "prix": 12,
+                    "exclusivite": "ecommerce"
+                },
+            ]
+        }
+
+    time = api.send_request('scheduler', 'clock/time')
+    message = '{ "from":"' + os.environ[
+        'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(body) + '}'
+    queue.send('gestion-commerciale', message)
+    return redirect(index)
 
 
 # Get le catalogue

@@ -26,4 +26,7 @@ urlpatterns = [
 
     path('test-async', views.test_async, name='test-async'),
 
+    #simulate
+    path('simulate-get-new-products', views.simulate_get_new_products, name='simulate-get-new-products'),
+
 ]
