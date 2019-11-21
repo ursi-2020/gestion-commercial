@@ -23,4 +23,7 @@ urlpatterns = [
     path('display-stock-reorder', views.display_stock_reorder, name='display-stock-reorder'),
     path('empty-stock-reorder', views.empty_stock_reorder, name='empty-stock-reorder'),
     path('schedule/stock-reorder', views.schedule_stock_reorder, name='schedule-stock-reorder'),
+
+    path('test-async', views.test_async, name='test-async'),
+
 ]

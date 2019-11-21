@@ -9,6 +9,8 @@ import json
 import requests
 import random
 from .models import *
+import os
+from apipkg import queue_manager as queue
 
 
 def index(request):
@@ -20,6 +22,15 @@ def index(request):
 
 def init_quantite(quantiteMin):
     return 2 * quantiteMin
+
+
+def test_async(request):
+    time = api.send_request('scheduler', 'clock/time')
+    message = '{ "from":"' + os.environ['DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": "Hello word"}'
+    queue.send('gestion-commerciale', message)
+    return redirect(index)
+
+
 
 # Get le catalogue
 
