@@ -16,7 +16,7 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django.setup()
 
-from application.djangoapp.views import *
+from application.djangoapp.internalFunctions import *
 
 from application.djangoapp.models import *
 
@@ -27,7 +27,7 @@ def main():
         print("ID: " + str(v.id) + "\tArticle: " + v.article.nom + "\tDate: " + str(v.date))
 
 
-def callback(ch, method, properties, body):
+def get_new_products(ch, method, properties, body):
     print(" [x] Received from queue %r" % body)
 
     products = json.loads(body)["body"]["produits"]
@@ -51,12 +51,7 @@ def callback(ch, method, properties, body):
 
 
 
-#def config_callbacks():
-    #callback(body="TEST")
-    #queue.receive('gestion-commerciale', djangoapp.views.get_new_products)
-
-
 if __name__ == '__main__':
-    #config_callbacks()
-    queue.receive('gestion-commerciale', callback)
+    #queue.receive('catalogue-produit', get_new_products)
+    queue.receive('gestion-commerciale', get_new_products)
     main()
