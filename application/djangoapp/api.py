@@ -23,7 +23,7 @@ def get_new_products(products):
             quantiteMin=product["quantiteMin"],
             packaging=product["packaging"],
             prix=product["prix"],
-            quantite=12
+            quantite=internalFunctions.init_quantite(product["quantiteMin"])
         )
 
         new_product.save()
@@ -32,7 +32,7 @@ def get_new_products(products):
 
     return redirect(internalFunctions.display_products)
 
-
+# Magasin
 
 # Traitement d"une demande de réapprovisionnement
 @csrf_exempt
@@ -61,8 +61,17 @@ def place_order(request):
 
 
 
-# gestion de l"envoi de ressources à Stock
+# Stock
 
+# Reçoit l'état des stocks
+def get_stocks(products):
+    print("coucou3")
+    for product in products:
+        p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
+        p.quantite = product["quantite"]
+        p.save()
+
+# gestion de l"envoi de ressources à Stock
 def stock_reorder(request):
     date = api_manager.send_request("scheduler", "clock/time")[1:-1]
     id_bon = 0

@@ -16,7 +16,8 @@ def index(request):
     context = {}
     return render(request, "simulate.html", context)
 
-def simulate_catalogue_add_new_products(request):
+# Simule le catalogue quand il envoie de nouveaux produits
+def simulate_get_new_products(request):
     body = \
         {
             "produits": [
@@ -51,12 +52,11 @@ def simulate_catalogue_add_new_products(request):
 
 
 # Simule le comportement du magain quand il commande du stock
-
 def simulate_placing_order(request):
     body = \
         {
             "idCommande": 123,
-            "Produits": [
+            "produits": [
                 {
                     "codeProduit": "X1-1",
                     "quantite": 1,
@@ -73,8 +73,30 @@ def simulate_placing_order(request):
     return redirect(internalFunctions.display_orders)
 
 
-# Simule le comportement de stock vis à vis du bon de commande
+## Simule le comportement des stocks quand il envoie des stocks
+def simulate_get_stocks(request):
+    body = \
+        {
+            "produits": [
+                {
+                    "codeProduit": "X1664",
+                    "quantite": 48,
+                },
+                {
+                    "codeProduit": "X3-0",
+                    "quantite": 10,
+                },
+            ]
+        }
+    time = api_manager.send_request('scheduler', 'clock/time')
+    message = '{ "from":"' + os.environ[
+        'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
+        body) + ',"functionname":"simulate_get_stocks"}'
+    queue.send('gestion-commerciale', message)
+    return redirect(internalFunctions.display_products)
 
+
+# Simule le comportement de stock vis à vis du bon de commande
 def simulate_stock_reorder(request):
     api.stock_reorder(request, simulate=True)
 

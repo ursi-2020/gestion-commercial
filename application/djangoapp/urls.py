@@ -27,9 +27,9 @@ urlpatterns = [
     path('simulate-index', simulate.index, name='simulate-index'),
     path('simulate-placing-order', simulate.simulate_placing_order, name='simulate-placing-order'),
     path('simulate-stock-response', simulate.simulate_stock_response, name='simulate-stock-response'),
-    path('simulate-get-new-products', simulate.simulate_catalogue_add_new_products, name='simulate-get-new-products'),
+    path('simulate-get-new-products', simulate.simulate_get_new_products, name='simulate-get-new-products'),
     path('simulate-stock-reorder', simulate.simulate_stock_reorder, name='simulate-stock-reorder'),
-
+    path('simulate-get-stocks', simulate.simulate_get_stocks, name='simulate-get-stocks'),
 
     # Internal functions
 

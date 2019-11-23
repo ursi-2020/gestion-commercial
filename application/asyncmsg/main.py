@@ -24,14 +24,7 @@ def main():
 
 
 
-## Demandes de stock
-# def get_stocks():
-#     body = None
-#     time = api_manager.send_request('scheduler', 'clock/time')
-#     message = '{ "from":"' + os.environ[
-#         'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
-#         body) + '}'
-#     queue.send('gestion-commerciale', message)
+
 
 
 def dispatch(ch, method, properties, body):
@@ -45,15 +38,17 @@ def dispatch(ch, method, properties, body):
         #if functionName == 'get_new_products':
         api.get_new_products(jsonLoad["body"]["produits"])
     elif fromApp == 'gestion-commerciale':
-        if functionName == "simulate_get_new_product":
+        if functionName == "simulate_get_new_products":
             api.get_new_products(jsonLoad["body"]["produits"])
-
+        elif functionName == "simulate_get_stocks":
+            api.get_stocks(jsonLoad["body"]["produits"])
+        else:
+            print("Le nom de la fonction dans le json n est pas valide")
     else:
-        print("Le nom de l'application donné dans le json n'existe pas.")
+        print("Le nom de l application du json n est pas valide")
 
 
 
 if __name__ == '__main__':
     queue.receive('gestion-commerciale', dispatch)
-    #queue.receive('gestion-commerciale', get_stocks)
     main()
