@@ -12,7 +12,7 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django.setup()
 
-from application.djangoapp.api import *
+from application.djangoapp import api
 from application.djangoapp.models import *
 
 
@@ -22,24 +22,7 @@ def main():
         print("ID: " + str(v.id) + "\tArticle: " + v.article.nom + "\tDate: " + str(v.date))
 
 
-# Récupère les nouveaux produits
-def get_new_products(products):
-    for product in products:
-        new_product = Product.objects.create(
-            codeProduit=product["codeProduit"],
-            familleProduit=product["familleProduit"],
-            descriptionProduit=product["descriptionProduit"],
-            quantiteMin=product["quantiteMin"],
-            packaging=product["packaging"],
-            prix=product["prix"],
-            quantite=12
-        )
 
-        new_product.save()
-    nb_products = len(products)
-    print(str(nb_products) + " products were saved")
-
-    return redirect(internalFunctions.display_products)
 
 ## Demandes de stock
 # def get_stocks():
@@ -60,10 +43,10 @@ def dispatch(ch, method, properties, body):
         functionName = jsonLoad["functionname"]
     if fromApp == 'catalogue-produit':
         #if functionName == 'get_new_products':
-        get_new_products(jsonLoad["body"]["produits"])
+        api.get_new_products(jsonLoad["body"]["produits"])
     elif fromApp == 'gestion-commerciale':
         if functionName == "simulate_get_new_product":
-            get_new_products(jsonLoad["body"]["produits"])
+            api.get_new_products(jsonLoad["body"]["produits"])
 
     else:
         print("Le nom de l'application donné dans le json n'existe pas.")

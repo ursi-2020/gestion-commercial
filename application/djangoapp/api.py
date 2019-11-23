@@ -13,6 +13,26 @@ from . import internalFunctions
 
 
 #Catalogue
+# Récupère les nouveaux produits
+def get_new_products(products):
+    for product in products:
+        new_product = Product.objects.create(
+            codeProduit=product["codeProduit"],
+            familleProduit=product["familleProduit"],
+            descriptionProduit=product["descriptionProduit"],
+            quantiteMin=product["quantiteMin"],
+            packaging=product["packaging"],
+            prix=product["prix"],
+            quantite=12
+        )
+
+        new_product.save()
+    nb_products = len(products)
+    print(str(nb_products) + " products were saved")
+
+    return redirect(internalFunctions.display_products)
+
+
 
 # Traitement d"une demande de réapprovisionnement
 @csrf_exempt
