@@ -1,12 +1,8 @@
 import sys
 import os
-
-from django.shortcuts import redirect
-
 import json
-
-
-#from application.djangoapp import views
+from django.shortcuts import redirect
+from apipkg import api_manager
 
 
 from apipkg import queue_manager as queue
@@ -16,8 +12,7 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django.setup()
 
-from application.djangoapp.internalFunctions import *
-
+from application.djangoapp.api import *
 from application.djangoapp.models import *
 
 
@@ -27,11 +22,8 @@ def main():
         print("ID: " + str(v.id) + "\tArticle: " + v.article.nom + "\tDate: " + str(v.date))
 
 
-def get_new_products(ch, method, properties, body):
-    print(" [x] Received from queue %r" % body)
-
-    products = json.loads(body)["body"]["produits"]
-    print(json.dumps(products))
+# Récupère les nouveaux produits
+def get_new_products(products):
     for product in products:
         new_product = Product.objects.create(
             codeProduit=product["codeProduit"],
@@ -47,11 +39,38 @@ def get_new_products(ch, method, properties, body):
     nb_products = len(products)
     print(str(nb_products) + " products were saved")
 
-    return redirect(display_products)
+    return redirect(internalFunctions.display_products)
+
+## Demandes de stock
+# def get_stocks():
+#     body = None
+#     time = api_manager.send_request('scheduler', 'clock/time')
+#     message = '{ "from":"' + os.environ[
+#         'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
+#         body) + '}'
+#     queue.send('gestion-commerciale', message)
+
+
+def dispatch(ch, method, properties, body):
+    print(" [x] Received from queue %r" % body)
+    jsonLoad = json.loads(body)
+    fromApp = jsonLoad["from"]
+    functionName = ""
+    if 'functionname' in jsonLoad:
+        functionName = jsonLoad["functionname"]
+    if fromApp == 'catalogue-produit':
+        #if functionName == 'get_new_products':
+        get_new_products(jsonLoad["body"]["produits"])
+    elif fromApp == 'gestion-commerciale':
+        if functionName == "simulate_get_new_product":
+            get_new_products(jsonLoad["body"]["produits"])
+
+    else:
+        print("Le nom de l'application donné dans le json n'existe pas.")
 
 
 
 if __name__ == '__main__':
-    #queue.receive('catalogue-produit', get_new_products)
-    queue.receive('gestion-commerciale', get_new_products)
+    queue.receive('gestion-commerciale', dispatch)
+    #queue.receive('gestion-commerciale', get_stocks)
     main()

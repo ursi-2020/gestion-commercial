@@ -10,9 +10,10 @@ urlpatterns = [
 
     # Api
 
-    path('get-products', api.get_product_from_catalogue, name='get-products'),
     path('place-order', api.place_order, name='place-order'),
     path('stock-reorder', api.stock_reorder, name='stock-reorder'),
+
+
 
 
     # Schedule
@@ -23,14 +24,17 @@ urlpatterns = [
 
     # Simulate
 
+    path('simulate-index', simulate.index, name='simulate-index'),
     path('simulate-placing-order', simulate.simulate_placing_order, name='simulate-placing-order'),
     path('simulate-stock-response', simulate.simulate_stock_response, name='simulate-stock-response'),
-    path('simulate-get-new-products', simulate.simulate_get_new_products, name='simulate-get-new-products'),
+    path('simulate-get-new-products', simulate.simulate_catalogue_add_new_products, name='simulate-get-new-products'),
+    path('simulate-stock-reorder', simulate.simulate_stock_reorder, name='simulate-stock-reorder'),
 
 
     # Internal functions
 
     # Gestion du catalogue
+    path('get-products', internalFunctions.get_product_from_catalogue, name='get-products'),
     path('display-products', internalFunctions.display_products, name='display-products'),
     path('delete-products', internalFunctions.delete_products, name='delete-products'),
     # Gestion réapro magasin

@@ -11,43 +11,10 @@ from .models import *
 from . import internalFunctions
 
 
-# Get le catalogue
 
-@csrf_exempt
-def get_product_from_catalogue(request):
-    Product.objects.all().delete()
-
-    data = api_manager.send_request("catalogue-produit", "api/get-all")
-    products = json.loads(data)["produits"]
-    for product in products:
-        new_product = Product.objects.create(
-            codeProduit=product["codeProduit"],
-            familleProduit=product["familleProduit"],
-            descriptionProduit=product["descriptionProduit"],
-            quantiteMin=product["quantiteMin"],
-            packaging=product["packaging"],
-            prix=product["prix"],
-            quantite=internalFunctions.init_quantite(product["quantiteMin"])
-            )
-
-        new_product.save()
-    nb_products = len(products)
-    print(str(nb_products) + " products were saved")
-    if nb_products > 0:
-        log = Log()
-        log.name = "last_product_update"
-        log.code = 200
-        log.text = str(nb_products) + " products were saved"
-        log.time = datetime.now()
-        log.save()
-    if request.method == "GET":
-        return redirect(internalFunctions.display_products)
-    else:
-        return HttpResponse()
-
+#Catalogue
 
 # Traitement d"une demande de réapprovisionnement
-
 @csrf_exempt
 def place_order(request):
     # load la requête de magasin
@@ -71,6 +38,7 @@ def place_order(request):
             )
         new_product.save()
     return JsonResponse(internalFunctions.dict_to_json(stock_response))
+
 
 
 # gestion de l"envoi de ressources à Stock
