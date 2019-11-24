@@ -46,7 +46,7 @@ def simulate_get_new_products(request):
 
     time = api_manager.send_request('scheduler', 'clock/time')
     message = '{ "from":"' + os.environ[
-        'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(body) + ', "functionname":"simulate_get_new_products"}'
+        'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(body) + ', "functionname":"get_new_products"}'
     queue.send('gestion-commerciale', message)
     return redirect(internalFunctions.display_products)
 
@@ -72,6 +72,30 @@ def simulate_placing_order(request):
     print(r.text)
     return redirect(internalFunctions.display_orders)
 
+# Simule le comportement du magain quand il commande du stock
+def simulate_order_magasin(request):
+    body = \
+        {
+            "idCommande": 123,
+            "produits": [
+                {
+                    "codeProduit": "X1664",
+                    "quantite": 1,
+                },
+                {
+                    "codeProduit": "X3-0",
+                    "quantite": 11,
+                },
+            ]
+        }
+    time = api_manager.send_request('scheduler', 'clock/time')
+    message = '{ "from":"' + os.environ[
+        'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
+        body) + ', "functionname":"get_order_magasin"}'
+    queue.send('gestion-commerciale', message)
+    return redirect(internalFunctions.display_orders)
+
+
 
 ## Simule le comportement des stocks quand il envoie des stocks
 def simulate_get_stocks(request):
@@ -91,14 +115,24 @@ def simulate_get_stocks(request):
     time = api_manager.send_request('scheduler', 'clock/time')
     message = '{ "from":"' + os.environ[
         'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
-        body) + ',"functionname":"simulate_get_stocks"}'
+        body) + ',"functionname":"get_stocks"}'
     queue.send('gestion-commerciale', message)
     return redirect(internalFunctions.display_products)
 
 
 # Simule le comportement de stock vis à vis du bon de commande
 def simulate_stock_reorder(request):
-    api.stock_reorder(request, simulate=True)
+    api.stock_reorder(request)
+
+
+def simulate_get_order_stocks(jsonLoad):
+    time = api_manager.send_request('scheduler', 'clock/time')
+    message = '{ "from":"' + os.environ[
+        'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
+        jsonLoad["body"]) + ',"functionname":"get_stock_order_response"}'
+    queue.send('gestion-commerciale', message)
+    return redirect(internalFunctions.display_stock_reorder)
+
 
 @csrf_exempt
 def simulate_stock_response(request):

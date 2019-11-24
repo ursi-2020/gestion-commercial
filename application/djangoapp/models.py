@@ -32,14 +32,6 @@ class Log(models.Model):
     body = models.TextField()
     time = models.DateTimeField()
 
-
-class DeliveryRequest(models.Model):
-    identifiantBon = models.CharField(max_length=200)
-    codeProduit = models.CharField(max_length=200)
-    quantiteDemandee = models.PositiveIntegerField()
-    quantiteLivree = models.PositiveIntegerField()
-
-
 class StockReorder(models.Model):
     identifiantBon = models.CharField(max_length=200)
     dateLivraison = models.CharField(max_length=200)
@@ -61,3 +53,17 @@ class Product(models.Model):
     def __str__(self):
         return "{\"codeProduit\":{}, \"familleProduit\":{}, \"descriptionProduit\":{},\"quantiteMin\":{}, \"packaging\":{}, \"prix\":{}}".format(
             self.codeProduit, self.familleProduit, self.descriptionProduit, self.quantiteMin, self.packaging, self.prix)
+
+
+class DeliveryRequest(models.Model):
+    identifiantBon = models.CharField(max_length=200)
+    products = models.ManyToManyField(Product, through='RequestProduct')
+
+class RequestProduct(models.Model):
+    quantiteDemandee = models.PositiveIntegerField()
+    quantiteLivree = models.PositiveIntegerField()
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    deliveryRequest = models.ForeignKey(DeliveryRequest, on_delete=models.CASCADE)
+
+
+

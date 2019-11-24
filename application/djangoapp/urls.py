@@ -9,11 +9,8 @@ urlpatterns = [
     path('', internalFunctions.index, name='index'),
 
     # Api
-
     path('place-order', api.place_order, name='place-order'),
     path('stock-reorder', api.stock_reorder, name='stock-reorder'),
-
-
 
 
     # Schedule
@@ -30,6 +27,7 @@ urlpatterns = [
     path('simulate-get-new-products', simulate.simulate_get_new_products, name='simulate-get-new-products'),
     path('simulate-stock-reorder', simulate.simulate_stock_reorder, name='simulate-stock-reorder'),
     path('simulate-get-stocks', simulate.simulate_get_stocks, name='simulate-get-stocks'),
+    path('simulate-order-magasin', simulate.simulate_order_magasin, name='simulate-order-magasin'),
 
     # Internal functions
 

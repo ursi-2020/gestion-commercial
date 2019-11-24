@@ -9,12 +9,15 @@ import requests
 import random
 from .models import *
 from . import internalFunctions
+import os
+from apipkg import queue_manager as queue
 
 
 
 #Catalogue
 # Récupère les nouveaux produits
-def get_new_products(products):
+def get_new_products(jsonLoad):
+    products = jsonLoad["body"]["produits"]
     for product in products:
         new_product = Product.objects.create(
             codeProduit=product["codeProduit"],
@@ -60,12 +63,45 @@ def place_order(request):
     return JsonResponse(internalFunctions.dict_to_json(stock_response))
 
 
+def get_order_magasin(jsonLoad, simulate=False):
+
+
+    body = jsonLoad["body"]
+    body["livraison"] = 0
+    products = body["produits"]
+
+
+    newDeliveryRequest = DeliveryRequest.objects.create( identifiantBon=body["idCommande"])
+    newDeliveryRequest.save()
+    for product in products:
+        newRequestProduct = RequestProduct.objects.create(
+            deliveryRequest= newDeliveryRequest,
+            product=Product.objects.filter(codeProduit=product["codeProduit"])[0],
+            quantiteDemandee=product["quantite"],
+            quantiteLivree=0
+        )
+        newRequestProduct.save()
+
+    time = api_manager.send_request('scheduler', 'clock/time')
+    message = None
+    if simulate:
+        message = '{ "from":"' + os.environ[
+            'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
+            body) + ', "functionname":"simulate_get_order_stocks"}'
+        queue.send('gestion-commerciale', message)
+    else:
+        message = '{ "from":"' + os.environ[
+        'DJANGO_APP_NAME'] + '", "to":"gestion-stock", "datetime": ' + time + ', "body": ' + json.dumps(
+        body) + ', "functionname":"get_order_stocks"}'
+        queue.send('gestion-stock', message)
+    return redirect(internalFunctions.display_products)
+
 
 # Stock
 
 # Reçoit l'état des stocks
-def get_stocks(products):
-    print("coucou3")
+def get_stocks(jsonLoad):
+    products = jsonLoad["body"]["produits"]
     for product in products:
         p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
         p.quantite = product["quantite"]
@@ -109,3 +145,35 @@ def stock_reorder(request):
     headers = {"Host": "gestion-stock"}
     requests.post(api_manager.api_services_url + "api/add-to-stock", headers=headers, json=internalFunctions.dict_to_json(jsonfile))
     return redirect(internalFunctions.display_stock_reorder)
+
+def get_stock_order_response(jsonLoad, simulate=False):
+    body = jsonLoad["body"]
+    products = jsonLoad["body"]["produits"]
+    deliveryRequest = DeliveryRequest.objects.filter(identifiantBon=body["idCommande"])[0]
+    for product in products:
+        p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
+        p.quantite += product["quantite"]
+        p.save()
+
+        requestProduct = RequestProduct.objects.filter(deliveryRequest=deliveryRequest, product=p)[0]
+
+        requestProduct.quantiteLivree = product["quantite"]
+        requestProduct.save()
+
+
+
+    time = api_manager.send_request('scheduler', 'clock/time')
+    message = None
+    if simulate:
+        message = '{ "from":"' + os.environ[
+            'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
+            body) + ', "functionname":"simulate_magasin_get_order_response"}'
+        queue.send('gestion-commerciale', message)
+    else:
+        message = '{ "from":"' + os.environ[
+        'DJANGO_APP_NAME'] + '", "to":"gestion-magasin", "datetime": ' + time + ', "body": ' + json.dumps(
+        body) + ', "functionname":"get_order_response"}'
+        queue.send('gestion-magasin', message)
+    return redirect(internalFunctions.display_products)
+
+

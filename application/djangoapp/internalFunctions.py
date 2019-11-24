@@ -82,8 +82,8 @@ def display_products(request):
 
 # Display toutes les demandes de stock
 def display_orders(request):
-    orders = DeliveryRequest.objects.all()
-    return render(request, "info_commandes.html", {"commandes": orders})
+    requestProducts = RequestProduct.objects.all()
+    return render(request, "info_commandes.html", {"requestProducts": requestProducts})
 
 
 # Vide la db contenant les demandes de réapprovisionnement
