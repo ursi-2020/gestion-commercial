@@ -40,7 +40,7 @@ def dispatch(ch, method, properties, body):
 
     elif fromApp == 'gestion-stock':
         if functionName == 'get_stock':
-            api.get_stocks(jsonLoad)
+            api.get_stocks(jsonLoad, simulate=True) # enlever "simulate=true" une fois le fournisseur implémenté
         elif functionName == "get_stock_order_response":
             api.get_stock_order_response(jsonLoad)
 
@@ -52,7 +52,7 @@ def dispatch(ch, method, properties, body):
         if functionName == "get_new_products":
             api.get_new_products(jsonLoad)
         elif functionName == "get_stocks":
-            api.get_stocks(jsonLoad)
+            api.get_stocks(jsonLoad, simulate=True)
         elif functionName == "get_order_magasin":
             api.get_order_magasin(jsonLoad, simulate=True)
         elif functionName == "simulate_get_order_stocks":
@@ -61,6 +61,12 @@ def dispatch(ch, method, properties, body):
             api.get_stock_order_response(jsonLoad, simulate=True)
         elif functionName =="simulate_magasin_get_order_response":
             print("Magasin receive response")
+        elif functionName == "simulate_fournisseur_stock":
+            simulate.simulate_fournisseur_stock(jsonLoad)
+        elif functionName == "fournisseur_stock_response":
+            api.fournisseur_stock_response(jsonLoad, simulate=True)
+        elif functionName == "simulate_stock_reorder":
+            print("Stock reordered")
         else:
             print("Le nom de la fonction dans le json n est pas valide")
 

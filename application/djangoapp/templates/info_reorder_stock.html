@@ -12,23 +12,19 @@
     <table class="table table-striped table-hover">
         <thead>
         <tr>
-            <th scope="col">#ID</th>
             <th scope="col">codeBon</th>
-            <th scope="col">dateLivraison</th>
             <th scope="col">codeProduit</th>
-            <th scope="col">quantiteAvant</th>
+            <th scope="col">quantiteDemandee</th>
             <th scope="col">quantiteLivree</th>
         </tr>
         </thead>
         <tbody>
-        {% for commande in commandes %}
+        {% for reorderProduct in reorderProducts %}
         <tr>
-            <td>{{ commande.id }}</td>
-            <td>{{ commande.identifiantBon }}</td>
-            <td>{{ commande.dateLivraison }}</td>
-            <td>{{ commande.codeProduit }}</td>
-            <td>{{ commande.quantiteAvant }}</td>
-            <td>{{ commande.quantiteLivree}}</td>
+            <td>{{ reorderProduct.stockReorder.identifiantBon }}</td>
+            <td>{{ reorderProduct.product.codeProduit }}</td>
+            <td>{{ reorderProduct.quantiteDemandee }}</td>
+            <td>{{ reorderProduct.quantiteLivree}}</td>
         </tr>
         {% endfor %}
         </tbody>

@@ -9,6 +9,7 @@ from datetime import datetime
 from django.http import HttpResponse
 from apipkg import queue_manager as queue
 import os
+from django.http import JsonResponse
 
 
 
@@ -31,41 +32,6 @@ def dict_to_json(py_dict):
     tmp = json.loads(json.dumps(py_dict))
     return tmp
 
-## Catalogue
-
-# Get le catalogue
-@csrf_exempt
-def get_product_from_catalogue(request):
-    Product.objects.all().delete()
-
-    data = api_manager.send_request("catalogue-produit", "api/get-all")
-    products = json.loads(data)["produits"]
-    for product in products:
-        new_product = Product.objects.create(
-            codeProduit=product["codeProduit"],
-            familleProduit=product["familleProduit"],
-            descriptionProduit=product["descriptionProduit"],
-            quantiteMin=product["quantiteMin"],
-            packaging=product["packaging"],
-            prix=product["prix"],
-            quantite=internalFunctions.init_quantite(product["quantiteMin"])
-            )
-
-        new_product.save()
-    nb_products = len(products)
-    print(str(nb_products) + " products were saved")
-    if nb_products > 0:
-        log = Log()
-        log.name = "last_product_update"
-        log.code = 200
-        log.text = str(nb_products) + " products were saved"
-        log.time = datetime.now()
-        log.save()
-    if request.method == "GET":
-        return redirect(internalFunctions.display_products)
-    else:
-        return HttpResponse()
-
 # Display les produits du catalogue
 def display_products(request):
     products = Product.objects.all().order_by("familleProduit")
@@ -77,8 +43,7 @@ def display_products(request):
 
 
 
-
-
+# Magasin
 
 # Display toutes les demandes de stock
 def display_orders(request):
@@ -86,34 +51,94 @@ def display_orders(request):
     return render(request, "info_commandes.html", {"requestProducts": requestProducts})
 
 
-# Vide la db contenant les demandes de réapprovisionnement
+# Vide la db contenant les demandes de réapprovisionnement du magasin
 def empty_orders(request):
+    RequestProduct.objects.all().delete()
     DeliveryRequest.objects.all().delete()
     return redirect(display_orders)
 
 
+
+
+#Stock
+
 # Display les reorder du stock
 def display_stock_reorder(request):
-    orders = StockReorder.objects.all()
-    return render(request, "info_reorder_stock.html", {"commandes": orders})
+    reorderProducts = ReorderProduct.objects.all()
+    return render(request, "info_reorder_stock.html", {"reorderProducts": reorderProducts})
 
 
 def empty_stock_reorder(request):
     StockReorder.objects.all().delete()
     return redirect(display_stock_reorder)
 
+def reorderStock(simulate=False):
+    products = Product.objects.all()
 
-# Initialize the jsonfile if stock do not have product at all
+    commandeFournisseur = {}
+    commandeFournisseur["produits"] = []
 
-def initialize_stock(request):
-    api.get_product_from_catalogue(request)
-    jsonfile = []
-    # Replace .all() with something like .justlecodeproduit
-    for product in Product.objects.all():
-        jsonfile.append({"codeProduit": product.codeProduit, "quantite": 0})
-    return dict_to_json(jsonfile)
-
+    date = api_manager.send_request("scheduler", "clock/time")[1:-1]
+    id_bon = 0
+    for s in date:
+        if s.isdigit():
+            id_bon = id_bon * 10 + int(s)
 
 
+    commandeFournisseur["identifiantBon"] = id_bon
+
+    newStockReorder = StockReorder.objects.create(identifiantBon=id_bon)
+    newStockReorder.save()
+    isEmpty = True
+    for product in products:
+        if product.quantite <= product.quantiteMin:
+            if product.quantite == 0:
+                product.quantiteMin = updateQuantiteMin(product)
+                product.save()
+            quantiteNeeded = product.quantiteMin - product.quantite
+            newReorderProduct = ReorderProduct.objects.create(
+                stockReorder=newStockReorder,
+                product=Product.objects.filter(codeProduit=product.codeProduit)[0],
+                quantiteDemandee=product.quantite,
+                quantiteLivree=0
+            )
+            newReorderProduct.save()
+
+            commandeFournisseur["produits"].append({"codeProduit":product.codeProduit,"quantite":quantiteNeeded})
+            isEmpty = False
+
+    if isEmpty:
+        print ("Stocks are good. No need to reorder")
+        return redirect(internalFunctions.display_products)
+
+
+
+    
+
+
+    body = internalFunctions.dict_to_json(commandeFournisseur)
+
+
+    time = api_manager.send_request('scheduler', 'clock/time')
+    if simulate:
+        message = '{ "from":"' + os.environ[
+            'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
+            body) + ', "functionname":"simulate_fournisseur_stock"}'
+        queue.send('gestion-commerciale', message)
+    else:
+        #TODO: wait for socle technique
+        message = '{ "from":"' + os.environ[
+            'DJANGO_APP_NAME'] + '", "to":"fournisseur", "datetime": ' + time + ', "body": ' + json.dumps(
+            body) + ', "functionname":"fournisseur_stock"}'
+        queue.send('gestion-magasin', message)
+
+    return redirect(internalFunctions.display_stock_reorder)
+
+
+def updateQuantite(product):
+    return 2 * product.quantiteMin
+
+def updateQuantiteMin(product):
+    return 2 * product.quantiteMin
 
 

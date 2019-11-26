@@ -104,7 +104,7 @@ def simulate_get_stocks(request):
             "produits": [
                 {
                     "codeProduit": "X1664",
-                    "quantite": 48,
+                    "quantite": 12,
                 },
                 {
                     "codeProduit": "X3-0",
@@ -120,10 +120,6 @@ def simulate_get_stocks(request):
     return redirect(internalFunctions.display_products)
 
 
-# Simule le comportement de stock vis à vis du bon de commande
-def simulate_stock_reorder(request):
-    api.stock_reorder(request)
-
 
 def simulate_get_order_stocks(jsonLoad):
     time = api_manager.send_request('scheduler', 'clock/time')
@@ -137,3 +133,12 @@ def simulate_get_order_stocks(jsonLoad):
 @csrf_exempt
 def simulate_stock_response(request):
     return JsonResponse(json.loads(request.body))
+
+
+def simulate_fournisseur_stock(jsonLoad):
+    time = api_manager.send_request('scheduler', 'clock/time')
+    message = '{ "from":"' + os.environ[
+        'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
+        jsonLoad["body"]) + ',"functionname":"fournisseur_stock_response"}'
+    queue.send('gestion-commerciale', message)
+    return redirect(internalFunctions.display_stock_reorder)
