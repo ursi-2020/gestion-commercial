@@ -8,11 +8,6 @@ from . import simulate
 urlpatterns = [
     path('', internalFunctions.index, name='index'),
 
-    # Api
-    path('place-order', api.place_order, name='place-order'),
-    path('stock-reorder', api.stock_reorder, name='stock-reorder'),
-
-
     # Schedule
 
     path('schedule/get-products', schedule.schedule_get_products_from_catalogue, name='schedule-get-product'),

@@ -44,10 +44,7 @@ def simulate_get_new_products(request):
             ]
         }
 
-    time = api_manager.send_request('scheduler', 'clock/time')
-    message = '{ "from":"' + os.environ[
-        'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(body) + ', "functionname":"get_new_products"}'
-    queue.send('gestion-commerciale', message)
+    internalFunctions.sendAsyncMsg("gestion-commerciale", body, "get_new_products")
     return redirect(internalFunctions.display_products)
 
 
@@ -88,11 +85,7 @@ def simulate_order_magasin(request):
                 },
             ]
         }
-    time = api_manager.send_request('scheduler', 'clock/time')
-    message = '{ "from":"' + os.environ[
-        'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
-        body) + ', "functionname":"get_order_magasin"}'
-    queue.send('gestion-commerciale', message)
+    internalFunctions.sendAsyncMsg("gestion-commerciale", body, "get_order_magasin")
     return redirect(internalFunctions.display_orders)
 
 
@@ -112,21 +105,13 @@ def simulate_get_stocks(request):
                 },
             ]
         }
-    time = api_manager.send_request('scheduler', 'clock/time')
-    message = '{ "from":"' + os.environ[
-        'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
-        body) + ',"functionname":"get_stocks"}'
-    queue.send('gestion-commerciale', message)
+    internalFunctions.sendAsyncMsg("gestion-commerciale", body, "get_stocks")
     return redirect(internalFunctions.display_products)
 
 
 
 def simulate_get_order_stocks(jsonLoad):
-    time = api_manager.send_request('scheduler', 'clock/time')
-    message = '{ "from":"' + os.environ[
-        'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
-        jsonLoad["body"]) + ',"functionname":"get_stock_order_response"}'
-    queue.send('gestion-commerciale', message)
+    internalFunctions.sendAsyncMsg("gestion-commerciale", jsonLoad["body"], "get_stock_order_response")
     return redirect(internalFunctions.display_stock_reorder)
 
 
@@ -136,9 +121,5 @@ def simulate_stock_response(request):
 
 
 def simulate_fournisseur_stock(jsonLoad):
-    time = api_manager.send_request('scheduler', 'clock/time')
-    message = '{ "from":"' + os.environ[
-        'DJANGO_APP_NAME'] + '", "to":"gestion-commerciale", "datetime": ' + time + ', "body": ' + json.dumps(
-        jsonLoad["body"]) + ',"functionname":"fournisseur_stock_response"}'
-    queue.send('gestion-commerciale', message)
+    internalFunctions.sendAsyncMsg("gestion-commerciale", jsonLoad["body"], "fournisseur_stock_response")
     return redirect(internalFunctions.display_stock_reorder)
