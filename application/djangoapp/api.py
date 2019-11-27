@@ -55,8 +55,6 @@ def get_order_magasin(jsonLoad, simulate=False):
         )
         newRequestProduct.save()
 
-    time = api_manager.send_request('scheduler', 'clock/time')
-    message = None
     if simulate:
         internalFunctions.sendAsyncMsg("gestion-commerciale", body, "simulate_get_order_stocks")
     else:
@@ -82,15 +80,14 @@ def get_stock_order_response(jsonLoad, simulate=False):
     deliveryRequest = DeliveryRequest.objects.filter(identifiantBon=body["idCommande"])[0]
     for product in products:
         p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
-        p.quantite += product["quantite"]
+        p.quantite -= product["quantite"]
         p.save()
 
         requestProduct = RequestProduct.objects.filter(deliveryRequest=deliveryRequest, product=p)[0]
-
         requestProduct.quantiteLivree = product["quantite"]
+        print(requestProduct.product.codeProduit)
         requestProduct.save()
 
-    time = api_manager.send_request('scheduler', 'clock/time')
     if simulate:
         internalFunctions.sendAsyncMsg("gestion-commerciale", body, "simulate_magasin_get_order°response")
     else:
@@ -105,7 +102,7 @@ def fournisseur_stock_response(jsonLoad, simulate=False):
     stockReorder = StockReorder.objects.filter(identifiantBon=body["identifiantBon"])[0]
     for product in products:
         p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
-        p.quantite = product["quantite"]
+        p.quantite += product["quantite"]
         p.save()
 
         reorderProduct = ReorderProduct.objects.filter(stockReorder=stockReorder, product=p)[0]

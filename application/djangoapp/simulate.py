@@ -77,11 +77,11 @@ def simulate_order_magasin(request):
             "produits": [
                 {
                     "codeProduit": "X1664",
-                    "quantite": 1,
+                    "quantite": 10,
                 },
                 {
                     "codeProduit": "X3-0",
-                    "quantite": 11,
+                    "quantite": 1,
                 },
             ]
         }

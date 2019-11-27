@@ -21,7 +21,7 @@
         {% for requestProduct in requestProducts %}
         <tr>
             <td>{{ requestProduct.deliveryRequest.identifiantBon }}</td>
-            <td>{{ requestProduct.codeProduit }}</td>
+            <td>{{ requestProduct.product.codeProduit }}</td>
             <td>{{ requestProduct.quantiteDemandee }}</td>
             <td>{{ requestProduct.quantiteLivree}}</td>
         </tr>
