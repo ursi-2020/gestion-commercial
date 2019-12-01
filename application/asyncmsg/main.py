@@ -40,7 +40,7 @@ def dispatch(ch, method, properties, body):
 
     elif fromApp == 'gestion-stock':
         if functionName == 'get_stock':
-            api.get_stocks(jsonLoad, simulate=True) # enlever "simulate=true" une fois le fournisseur implémenté
+            api.get_stocks(jsonLoad, simulate=False) # enlever "simulate=true" une fois le fournisseur implémenté
         elif functionName == "get_stock_order_response":
             api.get_stock_order_response(jsonLoad)
 

@@ -89,7 +89,7 @@ def reorderStock(simulate=False):
         if s.isdigit():
             id_bon = id_bon * 10 + int(s)
 
-    commandeFournisseur["identifiantBon"] = id_bon
+    commandeFournisseur["idCommande"] = id_bon
 
     newStockReorder = StockReorder.objects.create(identifiantBon=id_bon)
     newStockReorder.save()
@@ -112,7 +112,7 @@ def reorderStock(simulate=False):
             isEmpty = False
 
     if isEmpty:
-        print ("Stocks are good. No need to reorder")
+        print("Stocks are good. No need to reorder")
         return redirect(internalFunctions.display_products)
 
     body = internalFunctions.dict_to_json(commandeFournisseur)
@@ -121,7 +121,9 @@ def reorderStock(simulate=False):
         internalFunctions.sendAsyncMsg("gestion-commerciale", body, "simulate_fournisseur_stock")
     else:
         #TODO: wait for socle technique
-        internalFunctions.sendAsyncMsg("fournisseur", body, "fournisseur_stock")
+        body["livraison"] = 1
+        print('body is', body)
+        internalFunctions.sendAsyncMsg("gestion-stock", body, "get_order_stocks")
 
     return redirect(internalFunctions.display_stock_reorder)
 

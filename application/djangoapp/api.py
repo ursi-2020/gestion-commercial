@@ -66,7 +66,8 @@ def get_order_magasin(jsonLoad, simulate=False):
 
 # Reçoit l'état des stocks
 def get_stocks(jsonLoad, simulate=False):
-    products = jsonLoad["body"]["produits"]
+    print("jsonload is", jsonLoad)
+    products = jsonLoad["body"]["stock"]
     for product in products:
         p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
         p.quantite = product["quantite"]
@@ -88,6 +89,9 @@ def get_stock_order_response(jsonLoad, simulate=False):
     for product in products:
         p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
         p.quantite -= product["quantite"]
+        if p.quantite <0:
+            print("[!] Oooooops... Our stock tracking had a problem, no worries, I won't crash. ")
+            p.quantite = 0
         p.save()
 
         requestProduct = RequestProduct.objects.filter(deliveryRequest=deliveryRequest, product=p)[0]
@@ -95,6 +99,7 @@ def get_stock_order_response(jsonLoad, simulate=False):
         print(requestProduct.product.codeProduit)
         requestProduct.save()
 
+    print("simulaiton is", simulate, "sending", body)
     if simulate:
         internalFunctions.sendAsyncMsg("gestion-commerciale", body, "simulate_magasin_get_order°response")
     else:
