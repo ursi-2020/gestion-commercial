@@ -13,7 +13,6 @@ import os
 from apipkg import queue_manager as queue
 
 
-
 #Catalogue
 # Récupère les nouveaux produits du catalogue
 def get_new_products(jsonLoad):
@@ -37,14 +36,15 @@ def get_new_products(jsonLoad):
 
 # Magasin
 
+
 # Récupère la commande du magasin
 def get_order_magasin(jsonLoad, simulate=False):
     body = jsonLoad["body"]
+    # C'est pour stock (cf leur fonction stock_modif_from_body)
     body["livraison"] = 0
     products = body["produits"]
 
-
-    newDeliveryRequest = DeliveryRequest.objects.create( identifiantBon=body["idCommande"])
+    newDeliveryRequest = DeliveryRequest.objects.create(identifiantBon=body["idCommande"])
     newDeliveryRequest.save()
     for product in products:
         newRequestProduct = RequestProduct.objects.create(
@@ -77,7 +77,14 @@ def get_stocks(jsonLoad, simulate=False):
 def get_stock_order_response(jsonLoad, simulate=False):
     body = jsonLoad["body"]
     products = jsonLoad["body"]["produits"]
-    deliveryRequest = DeliveryRequest.objects.filter(identifiantBon=body["idCommande"])[0]
+    deliveryRequest = DeliveryRequest.objects.filter(identifiantBon=body["idCommande"])
+    try:
+        deliveryRequest = deliveryRequest[0]
+    except IndexError:
+        print("[!] it appears there are no command with the id you are searching in the database.")
+        print("[!] This message must show up if this is just a test from the test button")
+        return redirect(internalFunctions.display_products)
+
     for product in products:
         p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
         p.quantite -= product["quantite"]

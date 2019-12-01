@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+    <div class="row">
+        <div class="col align-self-center">
+            <h1>Test</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col align-self-center">
+            <p><a href="{%  url 'test-send-order-stock' %}" class="btn btn-secondary btn-sm">Envoyer ordre d'appro à Stock (bon commande)</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col align-self-center">
+            <a href="{%  url 'test-send-stock-magasin' %}" class="btn btn-secondary btn-sm">Envoyer stock à Magasin (bon livraison)</a>
+        </div>
+    </div>
+{% endblock %}

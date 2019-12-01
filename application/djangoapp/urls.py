@@ -23,6 +23,11 @@ urlpatterns = [
     path('simulate-get-stocks', simulate.simulate_get_stocks, name='simulate-get-stocks'),
     path('simulate-order-magasin', simulate.simulate_order_magasin, name='simulate-order-magasin'),
 
+    # Test
+    path('test-index', simulate.test_index, name='test-index'),
+    path('test-send-stock-magasin', simulate.test_send_stock_magasin, name='test-send-stock-magasin'),
+    path('test-send-order-stock', simulate.test_send_order_stock, name='test-send-order-stock'),
+
     # Internal functions
 
     # Gestion du catalogue

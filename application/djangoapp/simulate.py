@@ -16,6 +16,33 @@ def index(request):
     context = {}
     return render(request, "simulate.html", context)
 
+def test_index(request):
+    return render (request, "test.html", {})
+
+
+def test_send_stock_magasin(request):
+    return 0
+
+
+def test_send_order_stock(request) :
+    body = {
+            "livraison": 0,
+            "idCommande": 123,
+            "produits": [
+                {
+                    "codeProduit": "X1-1",
+                    "quantite": 1,
+                },
+                {
+                    "codeProduit": "X1-2",
+                    "quantite": 11,
+                },
+            ]
+        }
+    internalFunctions.sendAsyncMsg("gestion-stock", internalFunctions.dict_to_json(body), "get_order_stocks")
+
+    return test_index(request)
+
 # Simule le catalogue quand il envoie de nouveaux produits
 def simulate_get_new_products(request):
     body = \
@@ -48,6 +75,7 @@ def simulate_get_new_products(request):
     return redirect(internalFunctions.display_products)
 
 
+# OLD REQUETE  EN SYNCHRONE !
 # Simule le comportement du magain quand il commande du stock
 def simulate_placing_order(request):
     body = \
@@ -87,7 +115,6 @@ def simulate_order_magasin(request):
         }
     internalFunctions.sendAsyncMsg("gestion-commerciale", body, "get_order_magasin")
     return redirect(internalFunctions.display_orders)
-
 
 
 ## Simule le comportement des stocks quand il envoie des stocks
