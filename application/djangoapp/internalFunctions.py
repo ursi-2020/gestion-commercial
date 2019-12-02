@@ -104,7 +104,7 @@ def reorderStock(simulate=False):
                 stockReorder=newStockReorder,
                 product=Product.objects.filter(codeProduit=product.codeProduit)[0],
                 quantiteDemandee=product.quantite,
-                quantiteLivree=0
+                quantiteLivree=product.quantite # modifier ca quand on aura le fournisseur
             )
             newReorderProduct.save()
 
