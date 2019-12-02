@@ -122,7 +122,6 @@ def reorderStock(simulate=False):
     else:
         #TODO: wait for socle technique
         body["livraison"] = 1
-        print('body is', body)
         internalFunctions.sendAsyncMsg("gestion-stock", body, "get_order_stocks")
 
     return redirect(internalFunctions.display_stock_reorder)

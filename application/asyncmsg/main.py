@@ -27,12 +27,12 @@ def main():
 
 
 def dispatch(ch, method, properties, body):
-    print(" [x] Received from queue %r" % body)
     jsonLoad = json.loads(body)
     fromApp = jsonLoad["from"]
     functionName = ""
     if 'functionname' in jsonLoad:
         functionName = jsonLoad["functionname"]
+    print(" [x] Received async from", fromApp, "with function '" + functionName + "'")
 
     if fromApp == 'catalogue-produit':
         #if functionName == 'get_new_products':
