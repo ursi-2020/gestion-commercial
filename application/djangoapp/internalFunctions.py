@@ -99,7 +99,7 @@ def reorderStock(simulate=False):
             if product.quantite == 0:
                 product.quantiteMin = updateQuantiteMin(product)
                 product.save()
-            quantiteNeeded = product.quantiteMin - product.quantite
+            quantiteNeeded = 50 # product.quantiteMin - product.quantite
             newReorderProduct = ReorderProduct.objects.create(
                 stockReorder=newStockReorder,
                 product=Product.objects.filter(codeProduit=product.codeProduit)[0],
