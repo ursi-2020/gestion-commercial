@@ -2,15 +2,11 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from apipkg import api_manager as api
-
-myappurl = "http://localhost:" + os.environ["WEBSERVER_PORT"]
 
 
 def main():
-    api.unregister(os.environ['DJANGO_APP_NAME'])
-    api.register(myappurl, os.environ['DJANGO_APP_NAME'])
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -19,6 +15,7 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+    print("ARGV ARE", sys.argv)
     execute_from_command_line(sys.argv)
 
 

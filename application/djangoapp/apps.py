@@ -13,8 +13,3 @@ class ApplicationConfig(AppConfig):
         if os.environ.get('RUN_MAIN'):
             api.unregister(os.environ['DJANGO_APP_NAME'])
             api.register(myappurl, os.environ['DJANGO_APP_NAME'])
-
-            from .models import GlobalInfo
-            global_info = GlobalInfo.objects.first()
-            if not global_info:
-                GlobalInfo().save()
