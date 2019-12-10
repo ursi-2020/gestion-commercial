@@ -1,16 +1,6 @@
-from django.http import HttpResponse
 from django.shortcuts import redirect
-from apipkg import api_manager
-from datetime import datetime
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import json
-import requests
-import random
 from .models import *
 from . import internalFunctions
-import os
-from apipkg import queue_manager as queue
 
 
 #Catalogue

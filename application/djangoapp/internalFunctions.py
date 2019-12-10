@@ -1,15 +1,10 @@
 from django.shortcuts import render, redirect
 import json
 from .models import *
-from . import api
 from . import internalFunctions
-from django.views.decorators.csrf import csrf_exempt
 from apipkg import api_manager
-from datetime import datetime
-from django.http import HttpResponse
 from apipkg import queue_manager as queue
 import os
-from django.http import JsonResponse
 
 
 # Fonctions utiles

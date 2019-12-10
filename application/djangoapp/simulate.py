@@ -1,5 +1,4 @@
 from . import internalFunctions
-from . import api
 from apipkg import api_manager
 
 from django.http import JsonResponse
@@ -7,9 +6,6 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 from django.shortcuts import render, redirect
-
-import os
-from apipkg import queue_manager as queue
 
 
 def index(request):
