@@ -23,9 +23,6 @@ def main():
         print("ID: " + str(v.id) + "\tArticle: " + v.article.nom + "\tDate: " + str(v.date))
 
 
-
-
-
 def dispatch(ch, method, properties, body):
     jsonLoad = json.loads(body)
     fromApp = jsonLoad["from"]
@@ -46,6 +43,20 @@ def dispatch(ch, method, properties, body):
 
     elif fromApp == 'gestion-magasin':
         # if functionName == 'get_order_magasin
+        id_order = "No id reached"
+        try:
+            id_order = jsonLoad["body"]
+            try:
+                id_order = id_order["idCommande"]
+            except:
+                print("[!] There are no command id in the json received from magasin")
+        except:
+            print(" [!] There are no body in the json received from magasin")
+        try:
+            length = len(jsonLoad["body"]['produits'])
+        except:
+            print(" [!] There are either no body or no produits in body in the json received from magasin")
+        print("     --> Order from magasin, command ID is :", id_order, "length of list is :", length)
         api.get_order_magasin(jsonLoad)
 
     elif fromApp == 'gestion-commerciale':

@@ -20,7 +20,6 @@ def get_new_products(jsonLoad):
 
         new_product.save()
     nb_products = len(products)
-    print(str(nb_products) + " products were saved")
 
     return redirect(internalFunctions.display_products)
 
@@ -56,7 +55,6 @@ def get_order_magasin(jsonLoad, simulate=False):
 
 # Reçoit l'état des stocks
 def get_stocks(jsonLoad, simulate=False):
-    print("jsonload is", jsonLoad)
     products = jsonLoad["body"]["stock"]
     for product in products:
         p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
@@ -72,8 +70,7 @@ def get_stock_order_response(jsonLoad, simulate=False):
     try:
         deliveryRequest = deliveryRequest[0]
     except IndexError:
-        print("[!] it appears there are no command with the id you are searching in the database.")
-        print("[!] This message must show up if this is just a test from the test button")
+        print("[!] it appears there are no command with the id you are searching (id :'" + body["idCommande"] + "' in the database.")
         return redirect(internalFunctions.display_products)
 
     for product in products:
@@ -86,10 +83,8 @@ def get_stock_order_response(jsonLoad, simulate=False):
 
         requestProduct = RequestProduct.objects.filter(deliveryRequest=deliveryRequest, product=p)[0]
         requestProduct.quantiteLivree = product["quantite"]
-        print(requestProduct.product.codeProduit)
         requestProduct.save()
 
-    print("simulaiton is", simulate, "sending", body)
     if simulate:
         internalFunctions.sendAsyncMsg("gestion-commerciale", body, "simulate_magasin_get_order°response")
     else:
