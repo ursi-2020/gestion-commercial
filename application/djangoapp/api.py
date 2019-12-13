@@ -40,13 +40,22 @@ def get_order_magasin(jsonLoad, simulate=False):
             deliveryRequest= newDeliveryRequest,
             product=Product.objects.filter(codeProduit=product["codeProduit"])[0],
             quantiteDemandee=product["quantite"],
-            quantiteLivree=0
+            quantiteLivree=None
+        )
+        newRequestProduct.save()
+
+    if not products:
+        newRequestProduct = RequestProduct.objects.create(
+            deliveryRequest=newDeliveryRequest,
+            product=None,
+            quantiteDemandee=0,
+            quantiteLivree=None
         )
         newRequestProduct.save()
 
     if simulate:
         internalFunctions.sendAsyncMsg("gestion-commerciale", body, "simulate_get_order_stocks")
-    else:
+    elif products:
         internalFunctions.sendAsyncMsg("gestion-stock", body, "get_order_stocks")
     return redirect(internalFunctions.display_products)
 
@@ -70,7 +79,7 @@ def get_stock_order_response(jsonLoad, simulate=False):
     try:
         deliveryRequest = deliveryRequest[0]
     except IndexError:
-        print("[!] it appears there are no command with the id you are searching (id :'" + body["idCommande"] + "' in the database.")
+        print("[!] it appears there are no command with the id you are searching (id :'" + str(body["idCommande"]) + "' in the database.")
         return redirect(internalFunctions.display_products)
 
     for product in products:

@@ -50,6 +50,7 @@ class StockReorder(models.Model):
     identifiantBon = models.CharField(max_length=200)
     products = models.ManyToManyField(Product, through='ReorderProduct')
 
+
 class ReorderProduct(models.Model):
     quantiteDemandee = models.PositiveIntegerField()
     quantiteLivree = models.PositiveIntegerField()
@@ -57,15 +58,15 @@ class ReorderProduct(models.Model):
     stockReorder = models.ForeignKey(StockReorder, on_delete=models.CASCADE)
 
 
-
 class DeliveryRequest(models.Model):
     identifiantBon = models.CharField(max_length=200)
     products = models.ManyToManyField(Product, through='RequestProduct')
 
+
 class RequestProduct(models.Model):
     quantiteDemandee = models.PositiveIntegerField()
-    quantiteLivree = models.PositiveIntegerField()
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantiteLivree = models.PositiveIntegerField(null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     deliveryRequest = models.ForeignKey(DeliveryRequest, on_delete=models.CASCADE)
 
 
