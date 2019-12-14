@@ -3,6 +3,7 @@ from django.urls import path
 from . import internalFunctions
 from . import schedule
 from . import simulate
+from . import supplier
 
 urlpatterns = [
     path('', internalFunctions.index, name='index'),
@@ -38,5 +39,8 @@ urlpatterns = [
     # Gestion réapro Stock
     path('display-stock-reorder', internalFunctions.display_stock_reorder, name='display-stock-reorder'),
     path('empty-stock-reorder', internalFunctions.empty_stock_reorder, name='empty-stock-reorder'),
+    path('supplier-order', supplier.supplier_order, name='supplier-order'),
+
+
 
 ]
