@@ -56,7 +56,7 @@ def get_order_magasin(jsonLoad, simulate=False):
     if simulate:
         internalFunctions.sendAsyncMsg("gestion-commerciale", body, "simulate_get_order_stocks")
     elif products:
-        internalFunctions.sendAsyncMsg("gestion-stock", body, "get_order_stocks")
+        internalFunctions.sendAsyncMsg("gestion-stock", body, "delivery")
     return redirect(internalFunctions.display_products)
 
 
@@ -66,7 +66,22 @@ def get_order_magasin(jsonLoad, simulate=False):
 def get_stocks(jsonLoad, simulate=False):
     products = jsonLoad["body"]["stock"]
     for product in products:
-        p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
+        try:
+            p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
+        except IndexError:
+            print("[!] Index error : Stock has products that are not in gesco's database")
+            new_product = Product.objects.create(
+                codeProduit=product["codeProduit"],
+                familleProduit="Unknown",
+                descriptionProduit="Unknown",
+                quantiteMin=100,
+                packaging=1,
+                prix=0,
+                quantite=0
+            )
+            new_product.save()
+            p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
+
         p.quantite = product["quantite"]
         p.save()
     internalFunctions.reorderStock(simulate)
@@ -102,6 +117,7 @@ def get_stock_order_response(jsonLoad, simulate=False):
         internalFunctions.sendAsyncMsg("gestion-magasin", body, "get_order_response")
     return redirect(internalFunctions.display_products)
 
+
 # Reçoit la réponse du fournisseur pour la demande de stock
 def fournisseur_stock_response(jsonLoad, simulate=False):
     body = jsonLoad["body"]
@@ -116,7 +132,6 @@ def fournisseur_stock_response(jsonLoad, simulate=False):
         reorderProduct = ReorderProduct.objects.filter(stockReorder=stockReorder, product=p)[0]
         reorderProduct.quantiteLivree = product["quantite"]
         reorderProduct.save()
-
 
     if simulate:
         internalFunctions.sendAsyncMsg("gestion-commerciale", body, "simulate_stock_reorder")

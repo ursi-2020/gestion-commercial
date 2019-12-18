@@ -62,8 +62,6 @@ def empty_orders(request):
     return redirect(display_orders)
 
 
-
-
 #Stock
 
 # Display les reorders du stock
