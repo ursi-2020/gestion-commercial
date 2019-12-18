@@ -32,6 +32,7 @@ class Log(models.Model):
     body = models.TextField()
     time = models.DateTimeField()
 
+
 class Product(models.Model):
     codeProduit = models.CharField(max_length=200)
     familleProduit = models.CharField(max_length=200)
@@ -46,6 +47,7 @@ class Product(models.Model):
         return "{\"codeProduit\":{}, \"familleProduit\":{}, \"descriptionProduit\":{},\"quantiteMin\":{}, \"packaging\":{}, \"prix\":{}}".format(
             self.codeProduit, self.familleProduit, self.descriptionProduit, self.quantiteMin, self.packaging, self.prix)
 
+
 class StockReorder(models.Model):
     identifiantBon = models.CharField(max_length=200)
     products = models.ManyToManyField(Product, through='ReorderProduct')
@@ -53,7 +55,7 @@ class StockReorder(models.Model):
 
 class ReorderProduct(models.Model):
     quantiteDemandee = models.PositiveIntegerField()
-    quantiteLivree = models.PositiveIntegerField()
+    quantiteLivree = models.PositiveIntegerField(null=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     stockReorder = models.ForeignKey(StockReorder, on_delete=models.CASCADE)
 

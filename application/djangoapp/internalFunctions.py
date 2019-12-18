@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 import json
 from .models import *
-from . import internalFunctions
+from . import supplier
 from apipkg import api_manager
 from apipkg import queue_manager as queue
 import os
@@ -13,6 +13,7 @@ def index(request):
     context = {}
     return render(request, "index.html", context)
 
+
 def sendAsyncMsg(to, body, functionName):
     time = api_manager.send_request('scheduler', 'clock/time')
     print(" [-] Sending Async message to", to, "with function", functionName)
@@ -20,6 +21,7 @@ def sendAsyncMsg(to, body, functionName):
         'DJANGO_APP_NAME'] + '", "to": "' + to + '", "datetime": ' + time + ', "body": ' + json.dumps(
        body) + ', "functionname":"' + functionName + '"}'
     queue.send(to, message)
+
 
 def dict_to_json(py_dict):
     tmp = json.loads(json.dumps(py_dict))
@@ -32,6 +34,7 @@ def dict_to_json(py_dict):
 def delete_products(request):
     Product.objects.all().delete()
     return redirect(display_products)
+
 
 # Display les produits du catalogue
 def display_products(request):
@@ -68,10 +71,12 @@ def display_stock_reorder(request):
     reorderProducts = ReorderProduct.objects.all()
     return render(request, "info_reorder_stock.html", {"reorderProducts": reorderProducts})
 
+
 # Suprime les reorders du stocks
 def empty_stock_reorder(request):
     StockReorder.objects.all().delete()
     return redirect(display_stock_reorder)
+
 
 def reorderStock(simulate=False):
     products = Product.objects.all()
@@ -95,12 +100,12 @@ def reorderStock(simulate=False):
             if product.quantite == 0:
                 product.quantiteMin = updateQuantiteMin(product)
                 product.save()
-            quantiteNeeded = 50 # product.quantiteMin - product.quantite
+            quantiteNeeded = product.quantiteMin - product.quantite
             newReorderProduct = ReorderProduct.objects.create(
                 stockReorder=newStockReorder,
                 product=Product.objects.filter(codeProduit=product.codeProduit)[0],
-                quantiteDemandee=product.quantite,
-                quantiteLivree=product.quantite # modifier ca quand on aura le fournisseur
+                quantiteDemandee=product.quantite,  #FIXME : not qtt demandee mais qtt actuelle ?
+                quantiteLivree=None  # modifier ca quand on aura le fournisseur
             )
             newReorderProduct.save()
 
@@ -109,24 +114,25 @@ def reorderStock(simulate=False):
 
     if isEmpty:
         print("Stocks are good. No need to reorder")
-        return redirect(internalFunctions.display_products)
+        return redirect(display_products)
 
-    body = internalFunctions.dict_to_json(commandeFournisseur)
+    body = dict_to_json(commandeFournisseur)
 
     if simulate:
-        internalFunctions.sendAsyncMsg("gestion-commerciale", body, "simulate_fournisseur_stock")
+        sendAsyncMsg("gestion-commerciale", body, "simulate_fournisseur_stock")
     else:
         #TODO: wait for socle technique
-        body["livraison"] = 1
-        internalFunctions.sendAsyncMsg("gestion-stock", body, "get_order_stocks")
+        supplier.supplier_order(commandeFournisseur)
 
-    return redirect(internalFunctions.display_stock_reorder)
+    return redirect(display_stock_reorder)
 
 
 def updateQuantite(product):
     return 2 * product.quantiteMin
 
+
 def updateQuantiteMin(product):
-    return 2 * product.quantiteMin
+    #FIXME : j'ai bride l'update de qttmin pour les tests
+    return 100
 
 

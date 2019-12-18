@@ -31,14 +31,23 @@ urlpatterns = [
     # Internal functions
 
     # Gestion du catalogue
+
     path('display-products', internalFunctions.display_products, name='display-products'),
     path('delete-products', internalFunctions.delete_products, name='delete-products'),
+
     # Gestion réapro magasin
+
     path('display-orders', internalFunctions.display_orders, name='display-orders'),
     path('empty-orders', internalFunctions.empty_orders, name='empty-orders'),
+
     # Gestion réapro Stock
+
     path('display-stock-reorder', internalFunctions.display_stock_reorder, name='display-stock-reorder'),
     path('empty-stock-reorder', internalFunctions.empty_stock_reorder, name='empty-stock-reorder'),
+
+    # Supplier
+
+    path('supplier-receive', supplier.supplier_receive, name='supplier-receive'),
     path('supplier-order', supplier.supplier_order, name='supplier-order'),
 
 

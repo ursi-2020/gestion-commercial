@@ -82,10 +82,12 @@ def get_stock_order_response(jsonLoad, simulate=False):
         print("[!] it appears there are no command with the id you are searching (id :'" + str(body["idCommande"]) + "' in the database.")
         return redirect(internalFunctions.display_products)
 
+    print("------> No error in the trycatch (get_stock_order_response), id is:", body["idCommande"])
+
     for product in products:
         p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
         p.quantite -= product["quantite"]
-        if p.quantite <0:
+        if p.quantite < 0:
             print("[!] Oooooops... Our stock tracking had a problem, no worries, I won't crash. ")
             p.quantite = 0
         p.save()
