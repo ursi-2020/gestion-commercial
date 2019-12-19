@@ -50,6 +50,8 @@ urlpatterns = [
     path('supplier-receive', supplier.supplier_receive, name='supplier-receive'),
     path('supplier-order', supplier.supplier_order, name='supplier-order'),
     path('ship_orders_to_customer', supplier.ship_orders_to_customer, name='ship_orders_to_customer'),
+    path('bill_orders_to_customer', supplier.test, name='bill_orders_to_customer'),
+
 
 
 

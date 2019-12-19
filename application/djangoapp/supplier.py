@@ -21,15 +21,16 @@ def supplier_order(json_order):
         }
     }
 
-    (code, resp) = api.post_request2('fo', 'order', json.dumps(ouiouibaguett))
+    #   (code, resp) = api.post_request2('fo', 'order', json.dumps(ouiouibaguett))
 
-    #(code, resp) = api.post_request2('gestion-commerciale', 'supplier-receive', json.dumps(json_order))
-    #return HttpResponse(resp.text)
-    return HttpResponse(404)
+    (code, resp) = api.post_request2('gestion-commerciale', 'supplier-receive', json.dumps(json_order))
+    return HttpResponse(resp.text)
+    #   return HttpResponse(404)
 
 
 @csrf_exempt
 def supplier_receive(request):
+    print('!!!!!!! SUPPLY RECEVED!!!!!!!')
     print("received supplier response :")
     body = json.loads(request.body)
     body["livraison"] = 1
@@ -37,6 +38,18 @@ def supplier_receive(request):
     return HttpResponse(request)
 
 
+@csrf_exempt
 def ship_orders_to_customer(request):
-    print("IS THIS SHIPPING ROUTE WORKING ? I HOPE WE WILL NOT SEE THIS IN THE SOUTENANNNCE")
-    internalFunctions.sendAsyncMsg("business-intellignece", json.loads(request.body), "")
+    print('!!!!!!! SHIP ORDER TO CUSTOMER !!!!!!!')
+    print(request.body)
+    internalFunctions.sendAsyncMsg("business-intellignece", json.loads(request.body), "myvalue")
+    return HttpResponse('salut les enfants :) ')
+
+@csrf_exempt
+def test(request):
+    print('this is a test §!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    print(request.body)
+    return HttpResponse("TEST")
+
+# /control/shippings
+

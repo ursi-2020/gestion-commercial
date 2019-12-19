@@ -37,7 +37,7 @@ def get_order_magasin(jsonLoad, simulate=False):
     newDeliveryRequest.save()
     for product in products:
         newRequestProduct = RequestProduct.objects.create(
-            deliveryRequest= newDeliveryRequest,
+            deliveryRequest=newDeliveryRequest,
             product=Product.objects.filter(codeProduit=product["codeProduit"])[0],
             quantiteDemandee=product["quantite"],
             quantiteLivree=None
