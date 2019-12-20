@@ -33,9 +33,17 @@ def get_order_magasin(jsonLoad, simulate=False):
     body["livraison"] = 0
     products = body["produits"]
 
+    print("COMMANDE DE MAGASIN :")
+    print(body)
+    print("-----------------------------------------------------------------------------------------------------------")
+
     newDeliveryRequest = DeliveryRequest.objects.create(identifiantBon=body["idCommande"])
     newDeliveryRequest.save()
+
+
+
     for product in products:
+        print("code produit :", product["codeProduit"])
         newRequestProduct = RequestProduct.objects.create(
             deliveryRequest=newDeliveryRequest,
             product=Product.objects.filter(codeProduit=product["codeProduit"])[0],
@@ -43,6 +51,7 @@ def get_order_magasin(jsonLoad, simulate=False):
             quantiteLivree=None
         )
         newRequestProduct.save()
+
 
     if not products:
         newRequestProduct = RequestProduct.objects.create(
@@ -53,9 +62,11 @@ def get_order_magasin(jsonLoad, simulate=False):
         )
         newRequestProduct.save()
 
+
     if simulate:
         internalFunctions.sendAsyncMsg("gestion-commerciale", body, "simulate_get_order_stocks")
     elif products:
+        internalFunctions.sendAsyncMsg("business-intellignece", body, "Commande magasin")
         internalFunctions.sendAsyncMsg("gestion-stock", body, "delivery")
     return redirect(internalFunctions.display_products)
 

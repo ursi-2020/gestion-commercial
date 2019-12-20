@@ -1,36 +1,37 @@
 import json
 
-from apipkg import api_manager as api
+from apipkg import api_manager as api, api_manager
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime, timedelta
 
 from . import internalFunctions
 
 
 def supplier_order(json_order):
-    print("supply_order activated")
-    ouiouibaguett = {
-        "commande": {
-            "numeroCommande": '32',
-            "dateLivraison": '2019-02-05',
-            "items":  [
-                {"codeProduit": 'X1-33', "quantite": 3},
-                {"codeProduit": 'X1-25', "quantite": 3}
-            ]
+    clock_time = api_manager.send_request("scheduler", "clock/time")
+    time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
+    time = time + timedelta(days=2)
+    time_str = time.strftime('%Y-%m-%d')
 
-        }
-    }
+    if type(json_order) != dict:
+        json_order = {'produits': [{'codeProduit': 'X1-60', 'quantite': 12}], 'idCommande': 1, 'dateLivraison': '08/02/2019-11:52:05'}
 
-    #   (code, resp) = api.post_request2('fo', 'order', json.dumps(ouiouibaguett))
+    json_order_edit = {}
+    json_order_edit["commande"] = {}
+    json_order_edit["commande"]["items"] = json_order["produits"]
+    json_order_edit["commande"]["numeroCommande"] = str(json_order["idCommande"])
 
-    (code, resp) = api.post_request2('gestion-commerciale', 'supplier-receive', json.dumps(json_order))
+    json_order_edit["commande"]["dateLivraison"] = time_str
+
+    (code, resp) = api.post_request2('fo', 'order', json.dumps(json.loads(json.dumps(json_order_edit))))
+    internalFunctions.sendAsyncMsg("business-intellignece", internalFunctions.dict_to_json(json_order_edit), "Commande fournisseur")
     return HttpResponse(resp.text)
-    #   return HttpResponse(404)
 
 
 @csrf_exempt
 def supplier_receive(request):
-    print('!!!!!!! SUPPLY RECEVED!!!!!!!')
+    print('!!!!!!! WHY AM I USED ?????????????????????????????????????          !!!!!!!')
     print("received supplier response :")
     body = json.loads(request.body)
     body["livraison"] = 1
@@ -40,16 +41,23 @@ def supplier_receive(request):
 
 @csrf_exempt
 def ship_orders_to_customer(request):
-    print('!!!!!!! SHIP ORDER TO CUSTOMER !!!!!!!')
+    print('!!!!!!! Received supplier delivery !!!!!!!')
     print(request.body)
-    internalFunctions.sendAsyncMsg("business-intellignece", json.loads(request.body), "myvalue")
+    body = json.loads(request.body)
+    for l in body["livraisons"]:
+        print(l)
+        b = {}
+        b["idCommande"] = l["numeroCommande"]
+        b["produits"] = l["items"]
+
+        b["livraison"] = 1
+        print("sending ", b)
+        internalFunctions.sendAsyncMsg("gestion-stock", b, "resupply")
+
     return HttpResponse('salut les enfants :) ')
 
 @csrf_exempt
 def test(request):
-    print('this is a test §!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    print(request.body)
-    return HttpResponse("TEST")
-
-# /control/shippings
-
+    print('Received facture')
+    internalFunctions.sendAsyncMsg("business-intellignece", json.dumps(json.loads(request.body)), "get_bill")
+    return HttpResponse("okidoki les amis :)")
