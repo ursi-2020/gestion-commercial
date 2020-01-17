@@ -22,10 +22,10 @@ def sendAsyncMsg(to, body, functionName):
        body) + ', "functionname":"' + functionName + '"}'
     queue.send(to, message)
 
-def myprint(smth):
+def myprint(*args):
     IF_YOU_WANT_TO_PRINT_ANYTHING_SET_ME_TRUE = False
     if IF_YOU_WANT_TO_PRINT_ANYTHING_SET_ME_TRUE:
-        print(smth)
+        print(args)
 
 def dict_to_json(py_dict):
     tmp = json.loads(json.dumps(py_dict))

@@ -47,8 +47,8 @@ def ship_orders_to_customer(request):
         b = {}
         b["idCommande"] = l["numeroCommande"]
         b["produits"] = l["items"]
-
         b["livraison"] = 1
+        #FIXME : find the id in the database and update the amount delivred
         internalFunctions.sendAsyncMsg("gestion-stock", b, "resupply")
 
     return HttpResponse('salut les enfants :) ')
