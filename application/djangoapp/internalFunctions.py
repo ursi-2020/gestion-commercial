@@ -16,12 +16,16 @@ def index(request):
 
 def sendAsyncMsg(to, body, functionName):
     time = api_manager.send_request('scheduler', 'clock/time')
-    print(" [-] Sending Async message to", to, "with function", functionName)
+    myprint(" [-] Sending Async message to", to, "with function", functionName)
     message = '{ "from":"' + os.environ[
         'DJANGO_APP_NAME'] + '", "to": "' + to + '", "datetime": ' + time + ', "body": ' + json.dumps(
        body) + ', "functionname":"' + functionName + '"}'
     queue.send(to, message)
 
+def myprint(smth):
+    IF_YOU_WANT_TO_PRINT_ANYTHING_SET_ME_TRUE = False
+    if IF_YOU_WANT_TO_PRINT_ANYTHING_SET_ME_TRUE:
+        print(smth)
 
 def dict_to_json(py_dict):
     tmp = json.loads(json.dumps(py_dict))
@@ -111,7 +115,7 @@ def reorderStock(simulate=False):
             isEmpty = False
 
     if isEmpty:
-        print("Stocks are good. No need to reorder")
+        myprint("Stocks are good. No need to reorder")
         return redirect(display_products)
 
     body = dict_to_json(commandeFournisseur)

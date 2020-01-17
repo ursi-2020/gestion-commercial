@@ -3,10 +3,9 @@ from apipkg import api_manager
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import json
-import requests
 from django.shortcuts import render, redirect
-
+import requests
+import json
 
 def index(request):
     context = {}

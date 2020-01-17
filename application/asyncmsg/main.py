@@ -15,6 +15,7 @@ django.setup()
 from application.djangoapp import api
 from application.djangoapp import simulate
 from application.djangoapp.models import *
+from application.djangoapp import internalFunctions
 
 
 def main():
@@ -29,7 +30,7 @@ def dispatch(ch, method, properties, body):
     functionName = ""
     if 'functionname' in jsonLoad:
         functionName = jsonLoad["functionname"]
-    print(" [x] Received async from", fromApp, "with function '" + functionName + "'")
+    internalFunctions.myprint(" [x] Received async from", fromApp, "with function '" + functionName + "'")
 
     if fromApp == 'catalogue-produit':
         #if functionName == 'get_new_products':
@@ -49,14 +50,14 @@ def dispatch(ch, method, properties, body):
             try:
                 id_order = id_order["idCommande"]
             except:
-                print("[!] There are no command id in the json received from magasin")
+                internalFunctions.myprint("[!] There are no command id in the json received from magasin")
         except:
-            print(" [!] There are no body in the json received from magasin")
+            internalFunctions.myprint(" [!] There are no body in the json received from magasin")
         try:
             length = len(jsonLoad["body"]['produits'])
         except:
-            print(" [!] There are either no body or no produits in body in the json received from magasin")
-        print("     --> Order from magasin, command ID is :", id_order, "length of list is :", length)
+            internalFunctions.myprint(" [!] There are either no body or no produits in body in the json received from magasin")
+        internalFunctions.myprint("     --> Order from magasin, command ID is :", id_order, "length of list is :", length)
         api.get_order_magasin(jsonLoad)
 
     elif fromApp == 'gestion-commerciale':
@@ -71,18 +72,18 @@ def dispatch(ch, method, properties, body):
         elif functionName == "get_stock_order_response":
             api.get_stock_order_response(jsonLoad, simulate=True)
         elif functionName =="simulate_magasin_get_order_response":
-            print("Magasin receive response")
+            internalFunctions.myprint("Magasin receive response")
         elif functionName == "simulate_fournisseur_stock":
             simulate.simulate_fournisseur_stock(jsonLoad)
         elif functionName == "fournisseur_stock_response":
             api.fournisseur_stock_response(jsonLoad, simulate=True)
         elif functionName == "simulate_stock_reorder":
-            print("Stock reordered")
+            internalFunctions.myprint("Stock reordered")
         else:
-            print("Le nom de la fonction dans le json n est pas valide")
+            internalFunctions.myprint("Le nom de la fonction dans le json n est pas valide")
 
     else:
-        print("Le nom de l application du json n est pas valide")
+        internalFunctions.myprint("Le nom de l application du json n est pas valide")
 
 
 

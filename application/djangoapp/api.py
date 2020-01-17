@@ -33,17 +33,12 @@ def get_order_magasin(jsonLoad, simulate=False):
     body["livraison"] = 0
     products = body["produits"]
 
-    print("COMMANDE DE MAGASIN :")
-    print(body)
-    print("-----------------------------------------------------------------------------------------------------------")
-
     newDeliveryRequest = DeliveryRequest.objects.create(identifiantBon=body["idCommande"])
     newDeliveryRequest.save()
 
 
 
     for product in products:
-        print("code produit :", product["codeProduit"])
         newRequestProduct = RequestProduct.objects.create(
             deliveryRequest=newDeliveryRequest,
             product=Product.objects.filter(codeProduit=product["codeProduit"])[0],
@@ -108,7 +103,7 @@ def get_stock_order_response(jsonLoad, simulate=False):
         print("[!] it appears there are no command with the id you are searching (id :'" + str(body["idCommande"]) + "' in the database.")
         return redirect(internalFunctions.display_products)
 
-    print("------> No error in the trycatch (get_stock_order_response), id is:", body["idCommande"])
+    myprint("------> No error in the trycatch (get_stock_order_response), id is:", body["idCommande"])
 
     for product in products:
         p = Product.objects.filter(codeProduit=product["codeProduit"])[0]

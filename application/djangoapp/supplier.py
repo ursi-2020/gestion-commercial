@@ -4,7 +4,6 @@ from apipkg import api_manager as api, api_manager
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
-
 from . import internalFunctions
 
 
@@ -31,8 +30,8 @@ def supplier_order(json_order):
 
 @csrf_exempt
 def supplier_receive(request):
-    print('!!!!!!! WHY AM I USED ?????????????????????????????????????          !!!!!!!')
-    print("received supplier response :")
+    internalFunctions.myprint('!!!!!!! WHY AM I USED ?????????????????????????????????????          !!!!!!!')
+    internalFunctions.myprint("received supplier response :")
     body = json.loads(request.body)
     body["livraison"] = 1
     internalFunctions.sendAsyncMsg("gestion-stock", body, "resupply")
@@ -41,23 +40,21 @@ def supplier_receive(request):
 
 @csrf_exempt
 def ship_orders_to_customer(request):
-    print('!!!!!!! Received supplier delivery !!!!!!!')
-    print(request.body)
+    internalFunctions.myprint('!!!!!!! Received supplier delivery !!!!!!!')
+    internalFunctions.myprint(request.body)
     body = json.loads(request.body)
     for l in body["livraisons"]:
-        print(l)
         b = {}
         b["idCommande"] = l["numeroCommande"]
         b["produits"] = l["items"]
 
         b["livraison"] = 1
-        print("sending ", b)
         internalFunctions.sendAsyncMsg("gestion-stock", b, "resupply")
 
     return HttpResponse('salut les enfants :) ')
 
 @csrf_exempt
 def test(request):
-    print('Received facture')
+    internalFunctions.myprint('Received facture')
     internalFunctions.sendAsyncMsg("business-intellignece", json.dumps(json.loads(request.body)), "get_bill")
     return HttpResponse("okidoki les amis :)")
