@@ -16,7 +16,7 @@ def index(request):
 
 def sendAsyncMsg(to, body, functionName):
     time = api_manager.send_request('scheduler', 'clock/time')
-    myprint(" [-] Sending Async message to", to, "with function", functionName)
+    print(" [-] Sending Async message to", to, "with function", functionName)
     message = '{ "from":"' + os.environ[
         'DJANGO_APP_NAME'] + '", "to": "' + to + '", "datetime": ' + time + ', "body": ' + json.dumps(
        body) + ', "functionname":"' + functionName + '"}'
@@ -25,7 +25,10 @@ def sendAsyncMsg(to, body, functionName):
 def myprint(*args):
     IF_YOU_WANT_TO_PRINT_ANYTHING_SET_ME_TRUE = False
     if IF_YOU_WANT_TO_PRINT_ANYTHING_SET_ME_TRUE:
-        print(args)
+        for i in args:
+            print(i, end='')
+        print()
+
 
 def dict_to_json(py_dict):
     tmp = json.loads(json.dumps(py_dict))
@@ -107,7 +110,7 @@ def reorderStock(simulate=False):
                 stockReorder=newStockReorder,
                 product=Product.objects.filter(codeProduit=product.codeProduit)[0],
                 quantiteDemandee=product.quantite,  #FIXME : not qtt demandee mais qtt actuelle ?
-                quantiteLivree=None  # modifier ca quand on aura le fournisseur
+                quantiteLivree=None  #FIXME modifier ca quand on aura le fournisseur
             )
             newReorderProduct.save()
 

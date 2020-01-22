@@ -45,4 +45,6 @@ def schedule_get_products_from_catalogue(request):
 def schedule_task(body):
     headers = {"Host": "scheduler"}
     r = requests.post(api_manager.api_services_url + "schedule/add", headers=headers, json=body)
+    print(r.status_code)
+    print(r.text)
     return r.text
