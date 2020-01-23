@@ -103,7 +103,7 @@ def get_stock_order_response(jsonLoad, simulate=False):
         print("[!] it appears there are no command with the id you are searching (id :'" + str(body["idCommande"]) + "' in the database.")
         return redirect(internalFunctions.display_products)
 
-    myprint("------> No error in the trycatch (get_stock_order_response), id is:", body["idCommande"])
+    internalFunctions.myprint("------> No error in the trycatch (get_stock_order_response), id is:", body["idCommande"])
 
     for product in products:
         p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
