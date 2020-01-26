@@ -104,7 +104,8 @@ def get_stock_order_response(jsonLoad, simulate=False):
         return redirect(internalFunctions.display_products)
 
     internalFunctions.myprint("------> No error in the trycatch (get_stock_order_response), id is:", body["idCommande"])
-
+    internalFunctions.myprint("---------- RECEIVED STOCK TO DELIVER TO MAGASIN ----------")
+    internalFunctions.myprint("received stock is", products)
     for product in products:
         p = Product.objects.filter(codeProduit=product["codeProduit"])[0]
         p.quantite -= product["quantite"]
@@ -118,9 +119,10 @@ def get_stock_order_response(jsonLoad, simulate=False):
         requestProduct.save()
 
     if simulate:
-        internalFunctions.sendAsyncMsg("gestion-commerciale", body, "simulate_magasin_get_order°response")
+        internalFunctions.sendAsyncMsg("gestion-commerciale", body, "simulate_magasin_get_order_response")
     else:
         internalFunctions.sendAsyncMsg("gestion-magasin", body, "get_order_response")
+        internalFunctions.myprint("---------- STOCK DELIVERED TO MAGASIN ----------")
     return redirect(internalFunctions.display_products)
 
 
