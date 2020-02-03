@@ -56,5 +56,5 @@ def ship_orders_to_customer(request):
 @csrf_exempt
 def test(request):
     internalFunctions.myprint('Received facture')
-    internalFunctions.sendAsyncMsg("business-intellignece", json.dumps(json.loads(request.body)), "get_bill")
+    internalFunctions.sendAsyncMsg("business-intelligence", json.dumps(json.loads(request.body)), "get_bill")
     return HttpResponse("okidoki les amis :)")
