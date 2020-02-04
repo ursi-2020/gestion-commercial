@@ -106,16 +106,17 @@ def reorderStock(simulate=False):
                 product.quantiteMin = updateQuantiteMin(product)
                 product.save()
             quantiteNeeded = product.quantiteMin - product.quantite
-            newReorderProduct = ReorderProduct.objects.create(
-                stockReorder=newStockReorder,
-                product=Product.objects.filter(codeProduit=product.codeProduit)[0],
-                quantiteDemandee=product.quantite,  #FIXME : not qtt demandee mais qtt actuelle ?
-                quantiteLivree=None  #FIXME modifier ca quand on aura le fournisseur
-            )
-            newReorderProduct.save()
+            if quantiteNeeded > 0:
+                newReorderProduct = ReorderProduct.objects.create(
+                    stockReorder=newStockReorder,
+                    product=Product.objects.filter(codeProduit=product.codeProduit)[0],
+                    quantiteDemandee=product.quantite,  #FIXME : not qtt demandee mais qtt actuelle ?
+                    quantiteLivree=None  #FIXME modifier ca quand on aura le fournisseur
+                )
+                newReorderProduct.save()
 
-            commandeFournisseur["produits"].append({"codeProduit":product.codeProduit,"quantite":quantiteNeeded})
-            isEmpty = False
+                commandeFournisseur["produits"].append({"codeProduit":product.codeProduit,"quantite":quantiteNeeded})
+                isEmpty = False
 
     if isEmpty:
         myprint("Stocks are good. No need to reorder")
