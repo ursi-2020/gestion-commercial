@@ -10,7 +10,7 @@ from . import internalFunctions
 def supplier_order(json_order):
     clock_time = api_manager.send_request("scheduler", "clock/time")
     time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
-    time = time + timedelta(days=2)
+    time = time + timedelta(days=1)
     time_str = time.strftime('%Y-%m-%d')
 
     if type(json_order) != dict:
